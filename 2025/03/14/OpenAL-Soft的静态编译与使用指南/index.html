@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>OpenAL-Soft的静态编译与使用指南 | Floraison</title>
+
+
+
+    <link rel="icon" href="/cj2.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">OpenAL-Soft的静态编译与使用指南</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 14, 2025&nbsp;&nbsp;15:17:14</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="OpenAL"><a href="#OpenAL" class="headerlink" title="OpenAL"></a>OpenAL</h1><p>OpenAL是跨平台3D音频库，一般使用完全遵循其API的软件实现OpenAL-Soft。</p>
+<p><a target="_blank" rel="noopener" href="https://openal-soft.org/">OpenAL Soft - Software 3D Audio</a></p>
+<p>作者已经提供预编译二进制动态链接库(.dll)，但静态库(.lib)仍需要从源代码手动编译。</p>
+<h2 id="编译静态链接库"><a href="#编译静态链接库" class="headerlink" title="编译静态链接库"></a>编译静态链接库</h2><img src="https://raw.githubusercontent.com/floraison-io/imgRepo/refs/heads/master/img/2025-3-14_1.png" title="" alt="" style="zoom:50%;">
+
+<p>需要在CMake中单独手动添加生成参数LIBTYPE，值为STATIC。</p>
+<img src="https://raw.githubusercontent.com/floraison-io/imgRepo/refs/heads/master/img/2025-3-14_2.png" title="" alt="" style="zoom:50%;">
+
+<p>确保生成大小约为30兆的静态库，而不是动态库的导入库。</p>
+<p>注意：通过静态链接引入OpenAL soft，需要在include头文件之前添加预处理宏AL_LIBTYPE_STATIC。同时，Windows平台下需要一同链接winmm.lib。</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>类似OpenGL，OpenAL需要创建并绑定上下文。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ALCdevice* pDevice = <span class="built_in">alcOpenDevice</span>(<span class="literal">NULL</span>);</span><br><span class="line">ALCcontext* pContext;</span><br><span class="line"><span class="keyword">if</span> (pDevice)&#123;</span><br><span class="line">    pContext = <span class="built_in">alcCreateContext</span>(pDevice, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">alcMakeContextCurrent</span>(pContext);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    std::cerr &lt;&lt; <span class="string">&quot;ERROR: DEVICE OPEN FAILED&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建AL对象"><a href="#创建AL对象" class="headerlink" title="创建AL对象"></a>创建AL对象</h2><p>AL对象包括buffer，source，listener。其中每个Context包含一个默认listener，不需要手动创建。 </p>
+<ul>
+<li><strong>Buffer（缓冲区）</strong>：用于存储音频数据。</li>
+<li><strong>Source（音源）</strong>：播放音频的对象，与缓冲区绑定。</li>
+<li><strong>Listener（监听者）</strong>：模拟耳朵，决定音频的空间定位。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">    ALuint buffer, source;</span><br><span class="line"><span class="built_in">alGenBuffers</span>(<span class="number">1</span>, &amp;buffer);</span><br><span class="line"><span class="built_in">alGenSources</span>(<span class="number">1</span>, &amp;source);</span><br></pre></td></tr></table></figure>
+
+<p>函数返回无号整型id，为后续传参函数使用。</p>
+<h2 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h2><p>OpenAL的传参函数类似于OpenGL。函数尾缀f&#x2F;i代表传入浮点&#x2F;整型，尾缀v代表传入指针。第一参数为对象id，第二参数为OpenAL内建宏定义，这些宏定义以 <strong><code>AL_</code></strong> 或 <strong><code>ALC_</code></strong> 开头。</p>
+<p>音源的宏用于设置 <strong>音量、位置、速度、音调、循环播放</strong> 等。</p>
+<table>
+<thead>
+<tr>
+<th><strong>宏定义</strong></th>
+<th><strong>作用</strong></th>
+<th><strong>默认值</strong></th>
+<th><strong>使用的 API</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AL_GAIN</code></td>
+<td>设置音量 (0.0 ~ 1.0，&gt;1.0 可增益)</td>
+<td><code>1.0</code></td>
+<td><code>alSourcef</code></td>
+</tr>
+<tr>
+<td><code>AL_PITCH</code></td>
+<td>设置音调 (1.0 &#x3D; 正常, 0.5 &#x3D; 低八度, 2.0 &#x3D; 高八度)</td>
+<td><code>1.0</code></td>
+<td><code>alSourcef</code></td>
+</tr>
+<tr>
+<td><code>AL_LOOPING</code></td>
+<td>是否循环播放 (<code>AL_TRUE</code> &#x2F; <code>AL_FALSE</code>)</td>
+<td><code>AL_FALSE</code></td>
+<td><code>alSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_POSITION</code></td>
+<td>设置音源位置 (x, y, z)</td>
+<td><code>&#123;0,0,0&#125;</code></td>
+<td><code>alSourcefv</code></td>
+</tr>
+<tr>
+<td><code>AL_VELOCITY</code></td>
+<td>设置音源速度 (x, y, z)</td>
+<td><code>&#123;0,0,0&#125;</code></td>
+<td><code>alSourcefv</code></td>
+</tr>
+<tr>
+<td><code>AL_DIRECTION</code></td>
+<td>设置音源方向 (x, y, z)</td>
+<td><code>&#123;0,0,0&#125;</code></td>
+<td><code>alSourcefv</code></td>
+</tr>
+<tr>
+<td><code>AL_SOURCE_RELATIVE</code></td>
+<td>是否相对监听者定位 (<code>AL_TRUE</code> &#x2F; <code>AL_FALSE</code>)</td>
+<td><code>AL_FALSE</code></td>
+<td><code>alSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_SOURCE_STATE</code></td>
+<td>获取音源状态 (<code>AL_PLAYING</code>, <code>AL_PAUSED</code>, <code>AL_STOPPED</code>)</td>
+<td>-</td>
+<td><code>alGetSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_BUFFER</code></td>
+<td>绑定缓冲区 (Buffer ID)</td>
+<td><code>0</code></td>
+<td><code>alSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_REFERENCE_DISTANCE</code></td>
+<td>3D 音频的衰减起点</td>
+<td><code>1.0</code></td>
+<td><code>alSourcef</code></td>
+</tr>
+<tr>
+<td><code>AL_ROLLOFF_FACTOR</code></td>
+<td>3D 音频衰减速率 (<code>0.0</code> 表示无衰减)</td>
+<td><code>1.0</code></td>
+<td><code>alSourcef</code></td>
+</tr>
+</tbody></table>
+<p>示例：设置音源属性</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alSourcef</span>(source, AL_GAIN, <span class="number">0.8f</span>);      <span class="comment">// 设置音量</span></span><br><span class="line"><span class="built_in">alSourcef</span>(source, AL_PITCH, <span class="number">1.2f</span>);     <span class="comment">// 提高音调</span></span><br><span class="line"><span class="built_in">alSourcei</span>(source, AL_LOOPING, AL_TRUE); <span class="comment">// 循环播放</span></span><br><span class="line">ALfloat pos[] = &#123;<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">-3.0f</span>&#125;;</span><br><span class="line"><span class="built_in">alSourcefv</span>(source, AL_POSITION, pos);  <span class="comment">// 设置音源位置</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>监听者代表“耳朵”，影响 3D 声音的方向、位置等。</p>
+<table>
+<thead>
+<tr>
+<th><strong>宏定义</strong></th>
+<th><strong>作用</strong></th>
+<th><strong>默认值</strong></th>
+<th><strong>使用 API</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AL_POSITION</code></td>
+<td>监听者位置 (x, y, z)</td>
+<td><code>&#123;0,0,0&#125;</code></td>
+<td><code>alListenerfv</code></td>
+</tr>
+<tr>
+<td><code>AL_VELOCITY</code></td>
+<td>监听者速度 (x, y, z)</td>
+<td><code>&#123;0,0,0&#125;</code></td>
+<td><code>alListenerfv</code></td>
+</tr>
+<tr>
+<td><code>AL_ORIENTATION</code></td>
+<td>监听者朝向 (<code>前向向量 + 上向量</code>)</td>
+<td><code>&#123;0,0,-1, 0,1,0&#125;</code></td>
+<td><code>alListenerfv</code></td>
+</tr>
+<tr>
+<td><code>AL_GAIN</code></td>
+<td>监听者整体音量</td>
+<td><code>1.0</code></td>
+<td><code>alListenerf</code></td>
+</tr>
+</tbody></table>
+<p>示例：设置监听者位置和方向。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ALfloat listenerPos[] = &#123;<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>&#125;;</span><br><span class="line">ALfloat listenerOri[] = &#123;<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">-1.0f</span>,  <span class="comment">// 前向</span></span><br><span class="line">                         <span class="number">0.0f</span>, <span class="number">1.0f</span>,  <span class="number">0.0f</span>&#125;; <span class="comment">// 上向</span></span><br><span class="line"><span class="built_in">alListenerfv</span>(AL_POSITION, listenerPos);</span><br><span class="line"><span class="built_in">alListenerfv</span>(AL_ORIENTATION, listenerOri);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="参数查询"><a href="#参数查询" class="headerlink" title="参数查询"></a>参数查询</h2><p>这些宏用于查询 <strong>音源、缓冲区、监听者</strong> 的当前状态。</p>
+<table>
+<thead>
+<tr>
+<th><strong>宏定义</strong></th>
+<th><strong>作用</strong></th>
+<th><strong>返回值</strong></th>
+<th><strong>使用 API</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AL_SOURCE_STATE</code></td>
+<td>获取音源当前状态</td>
+<td><code>AL_PLAYING</code> &#x2F; <code>AL_STOPPED</code> &#x2F; <code>AL_PAUSED</code></td>
+<td><code>alGetSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_PLAYING</code></td>
+<td>表示音源正在播放</td>
+<td><code>0x1012</code></td>
+<td><code>alGetSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_STOPPED</code></td>
+<td>表示音源已停止</td>
+<td><code>0x1014</code></td>
+<td><code>alGetSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_PAUSED</code></td>
+<td>表示音源已暂停</td>
+<td><code>0x1013</code></td>
+<td><code>alGetSourcei</code></td>
+</tr>
+<tr>
+<td><code>AL_INITIAL</code></td>
+<td>表示音源未播放过</td>
+<td><code>0x1011</code></td>
+<td><code>alGetSourcei</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ALint state;</span><br><span class="line"><span class="built_in">alGetSourcei</span>(source, AL_SOURCE_STATE, &amp;state);</span><br><span class="line"><span class="keyword">if</span> (state == AL_PLAYING) &#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;音源正在播放\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="音频播放"><a href="#音频播放" class="headerlink" title="音频播放"></a>音频播放</h2><p><strong>缓冲区 (Buffer) 存储音频数据</strong>，需要先填充缓冲区才能播放音频。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alBufferData</span>(buffer, AL_FORMAT_MONO16, pcmData, dataSize, sampleRate);</span><br></pre></td></tr></table></figure>
+
+<p>参数解析：</p>
+<ul>
+<li><code>buffer</code>：缓冲区 ID</li>
+<li><code>AL_FORMAT_MONO16</code>：音频格式（单声道 16-bit）</li>
+<li><code>pcmData</code>：音频数据指针</li>
+<li><code>dataSize</code>：数据大小（字节）</li>
+<li><code>sampleRate</code>：采样率，一般为44100Hz</li>
+</ul>
+<p>此处提供加载音频数据指针的函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">loadPCM</span><span class="params">(std::string audioPath, <span class="type">unsigned</span> <span class="type">char</span>** audioBuffer，<span class="type">int</span>* audioSize)</span> </span>&#123;</span><br><span class="line">    <span class="function">std::ifstream <span class="title">audioFile</span><span class="params">(audioPath, std::ios::binary | std::ios::in)</span></span>;</span><br><span class="line">    audioFile.<span class="built_in">seekg</span>(<span class="number">0</span>, std::ios::beg);</span><br><span class="line">    <span class="function">std::ifstream <span class="title">file</span><span class="params">(audioPath, std::ios::binary | std::ios::ate)</span></span>;</span><br><span class="line">    std::streampos endPos = file.<span class="built_in">tellg</span>();</span><br><span class="line">    *audioSize = <span class="built_in">int</span>(endPos);</span><br><span class="line">    file.<span class="built_in">close</span>();</span><br><span class="line">    *audioBuffer = <span class="keyword">new</span> <span class="type">unsigned</span> <span class="type">char</span>[audioSize];</span><br><span class="line">    audioFile.<span class="built_in">read</span>((<span class="type">char</span>*)audioBuffer, audioSize);</span><br><span class="line">    audioFile.<span class="built_in">close</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>绑定缓冲区至声源，并播放音频。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//绑定</span></span><br><span class="line"><span class="built_in">alSourcei</span>(source, AL_BUFFER, buffer);</span><br><span class="line"><span class="comment">// 播放音频</span></span><br><span class="line"><span class="built_in">alSourcePlay</span>(source);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h2><p>运行结束前，需要手动释放每一个创建过的AL对象，销毁上下文和设备。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alDeleteSources</span>(<span class="number">1</span>, &amp;source);</span><br><span class="line"><span class="built_in">alDeleteBuffers</span>(<span class="number">1</span>, &amp;buffer);</span><br><span class="line"><span class="built_in">alcMakeContextCurrent</span>(<span class="literal">NULL</span>);</span><br><span class="line"><span class="built_in">alcDestroyContext</span>(context);</span><br><span class="line"><span class="built_in">alcCloseDevice</span>(device);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><p>此处提供音频加载，循环播放的完整实现代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> AL_LIBTYPE_STATIC</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;AL/al.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;AL/alc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">loadAudioSource</span><span class="params">(ALuint* m_source, ALuint* m_buffer, std::string audioPath)</span> </span>&#123;</span><br><span class="line">    <span class="function">std::ifstream <span class="title">audioFile</span><span class="params">(audioPath, std::ios::binary | std::ios::in)</span></span>;</span><br><span class="line">    audioFile.<span class="built_in">seekg</span>(<span class="number">100</span>, std::ios::beg);</span><br><span class="line">    <span class="function">std::ifstream <span class="title">file</span><span class="params">(audioPath, std::ios::binary | std::ios::ate)</span></span>;</span><br><span class="line">    std::streampos endPos = file.<span class="built_in">tellg</span>();</span><br><span class="line">    <span class="type">int</span> audioSize = <span class="built_in">int</span>(endPos);</span><br><span class="line">    file.<span class="built_in">close</span>();</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* audioBuffer = <span class="keyword">new</span> <span class="type">unsigned</span> <span class="type">char</span>[audioSize];</span><br><span class="line">    audioFile.<span class="built_in">read</span>((<span class="type">char</span>*)audioBuffer, audioSize);</span><br><span class="line">    audioFile.<span class="built_in">close</span>();</span><br><span class="line"></span><br><span class="line">    ALuint buffer, source;</span><br><span class="line">    <span class="built_in">alGenBuffers</span>(<span class="number">1</span>, &amp;buffer);</span><br><span class="line">    <span class="built_in">alBufferData</span>(buffer, AL_FORMAT_STEREO16, audioBuffer, audioSize, <span class="number">44100</span>);</span><br><span class="line">    <span class="built_in">alGenSources</span>(<span class="number">1</span>, &amp;source);</span><br><span class="line">    <span class="built_in">alSourcei</span>(source, AL_BUFFER, buffer);</span><br><span class="line">    *m_source = source;</span><br><span class="line">    *m_buffer = buffer;</span><br><span class="line">    <span class="keyword">delete</span>[] audioBuffer;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ALCdevice* device = <span class="built_in">alcOpenDevice</span>(<span class="literal">NULL</span>);</span><br><span class="line">    ALCcontext* context;</span><br><span class="line">    <span class="keyword">if</span> (device)</span><br><span class="line">    &#123;</span><br><span class="line">        context = <span class="built_in">alcCreateContext</span>(device, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="built_in">alcMakeContextCurrent</span>(context);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;device open error&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ALuint source, buffer;</span><br><span class="line">    <span class="built_in">loadAudioSource</span>(&amp;source, &amp;buffer, <span class="string">&quot;../audio/test_audio.wav&quot;</span>);</span><br><span class="line">    <span class="built_in">alSourcei</span>(source, AL_LOOPING, AL_TRUE);</span><br><span class="line">    <span class="built_in">alSourcePlay</span>(source);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">alDeleteSources</span>(<span class="number">1</span>, &amp;source);</span><br><span class="line">    <span class="built_in">alDeleteBuffers</span>(<span class="number">1</span>, &amp;buffer);</span><br><span class="line">    <span class="built_in">alcMakeContextCurrent</span>(<span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">alcDestroyContext</span>(context);</span><br><span class="line">    <span class="built_in">alcCloseDevice</span>(device);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2025/03/14/OpenAL-Soft%E7%9A%84%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">https://floraison.io/2025/03/14/OpenAL-Soft%E7%9A%84%E9%9D%99%E6%80%81%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2025/03/14/%E4%BC%98%E9%9B%85%E7%9A%84%E5%B0%81%E8%A3%85std-variant/">优雅的封装std::variant</a>
+            
+            
+            <a class="next" rel="next" href="/2024/10/31/Markdown-%E6%B5%8B%E8%AF%95/">Markdown 测试</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
