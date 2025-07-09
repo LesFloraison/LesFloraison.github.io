@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>区块链上DApp社区开发实录 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">区块链上DApp社区开发实录</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">July 9, 2025&nbsp;&nbsp;15:22:31</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="项目概览"><a href="#项目概览" class="headerlink" title="项目概览"></a>项目概览</h3><ul>
+<li><p><strong>项目名称</strong>: 奶油社区 (Creamunity)</p>
+</li>
+<li><p><strong>技术栈</strong>:</p>
+<ul>
+<li><p><strong>区块链</strong>: Ethereum Sepolia 测试网</p>
+</li>
+<li><p><strong>智能合约语言</strong>: Solidity</p>
+</li>
+<li><p><strong>开发环境</strong>: Hardhat</p>
+</li>
+<li><p><strong>前端库</strong>: Ethers.js</p>
+</li>
+</ul>
+</li>
+<li><p><strong>核心流程</strong>:</p>
+<ol>
+<li><p><strong>发行代币 (CreamCoin)</strong>: 创建一个标准的 ERC-20 代币。</p>
+</li>
+<li><p><strong>创建社交合约 (Creamunity)</strong>: 负责处理发帖、打赏逻辑。</p>
+</li>
+<li><p><strong>开发前端页面</strong>: 用户进行交互的界面。</p>
+</li>
+<li><p><strong>实现核心功能</strong>: 创建钱包、登录、查余额、发帖 (消耗币并上链)、看帖、打赏。</p>
+</li>
+<li><p><strong>Gas 费用代付</strong>: 后端服务器为用户的操作代付 gas 费用。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="准备工作与环境搭建"><a href="#准备工作与环境搭建" class="headerlink" title="准备工作与环境搭建"></a>准备工作与环境搭建</h3><p><strong>1. 初始化项目</strong></p>
+<p>打开终端 PowerShell 创建项目。</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># <span class="number">1</span>. 创建一个项目文件夹</span><br><span class="line"><span class="keyword">mkdir</span> creamunity</span><br><span class="line">cd creamunity</span><br><span class="line"></span><br><span class="line"># <span class="number">2</span>. 初始化 Node.js 项目</span><br><span class="line">npm init -y</span><br><span class="line"></span><br><span class="line"># <span class="number">3</span>. 安装 Hardhat - 专业的以太坊开发环境</span><br><span class="line">npm install --<span class="keyword">save</span>-dev hardhat</span><br><span class="line"></span><br><span class="line"># <span class="number">4</span>. 启动 Hardhat</span><br><span class="line">npx hardhat</span><br></pre></td></tr></table></figure>
+
+<p>启动 Hardhat 时，它会询问：</p>
+<ul>
+<li><p>选择 <code>Create a JavaScript project</code>。</p>
+</li>
+<li><p><code>Hardhat project root</code>: 直接回车。</p>
+</li>
+<li><p><code>Do you want to add a .gitignore?</code>: <code>y</code> (yes)。</p>
+</li>
+<li><p><code>Do you want to install sample project&#39;s dependencies with npm?</code>: <code>y</code> (yes)。</p>
+</li>
+</ul>
+<h3 id="阶段一：发行代币-Token"><a href="#阶段一：发行代币-Token" class="headerlink" title="阶段一：发行代币 (Token)"></a>阶段一：发行代币 (Token)</h3><p>代币是项的经济基础，创建一个标准的 ERC-20 代币。为了安全和简单，使用 OpenZeppelin 提供的标准合约模板。</p>
+<p><strong>1.安装 OpenZeppelin 合约库</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install @openzeppelin/contracts</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.创建 CreamCoin.sol 合约</strong></p>
+<p>在 <code>contracts/</code> 文件夹下，创建一个新文件 <code>CreamCoin.sol</code>，并写入以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line">pragma solidity ^0.8.20;</span><br><span class="line"></span><br><span class="line">import &quot;@openzeppelin/contracts/token/ERC20/ERC20.sol&quot;;</span><br><span class="line">import &quot;@openzeppelin/contracts/access/Ownable.sol&quot;; // 引入 Ownable</span><br><span class="line"></span><br><span class="line">// 标准的 ERC-20 代币合约</span><br><span class="line">// 继承 OpenZeppelin 的 ERC20 和 Ownable 合约</span><br><span class="line">contract CreamCoin is ERC20, Ownable &#123;</span><br><span class="line"></span><br><span class="line">    // 构造函数，在部署时被调用一次</span><br><span class="line">    // initialOwner 是部署这个合约的钱包地址</span><br><span class="line">    constructor(address initialOwner) ERC20(&quot;Cream Coin&quot;, &quot;CREAM&quot;) Ownable(initialOwner) &#123;</span><br><span class="line">        // 在这里可以给自己预先铸造一些币</span><br><span class="line">        // _mint(接收者地址, 数量)</span><br><span class="line">        // 1000000 * 10^18 (ERC20 默认 18 位小数)</span><br><span class="line">        _mint(msg.sender, 1000000 * 10**decimals());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 提供一个公开的 mint 函数，只有合约拥有者(Owner)可以调用</span><br><span class="line">    function mint(address to, uint256 amount) public onlyOwner &#123;</span><br><span class="line">        _mint(to, amount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>代码解释</strong>:</p>
+<ul>
+<li><p><code>ERC20(&quot;Cream Coin&quot;, &quot;CREAM&quot;)</code>: 定义了代币的全名和简称。</p>
+</li>
+<li><p><code>Ownable(initialOwner)</code>: 设置部署者为合约的”拥有者”，只有拥有者能调用 <code>onlyOwner</code> 修饰的函数。</p>
+</li>
+<li><p><code>_mint(msg.sender, ...)</code>: 在合约部署时，给自己的钱包里铸造 1,000,000 个奶油币。</p>
+</li>
+<li><p><code>mint(...)</code> 函数: 允许以后继续增发，比如给 faucet 或者新用户。</p>
+</li>
+</ul>
+<p><strong>3.配置部署环境</strong></p>
+<p>需要告诉 Hardhat 如何连接到 Sepolia 测试网。</p>
+<ul>
+<li><p><strong>获取 RPC URL</strong>:  <a target="_blank" rel="noopener" href="https://www.infura.io/">Infura</a>，创建一个新的 App，选择 Ethereum Sepolia 网络，然后复制其 HTTPS RPC URL。</p>
+</li>
+<li><p><strong>获取私钥</strong>: 从 MetaMask 导出私钥。点击账户详情 -&gt; 导出私钥。</p>
+</li>
+<li><p><strong>安装 <code>dotenv</code></strong>: 为了安全地管理私钥和 URL，使用 <code>.env</code> 文件。</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install dotenv</span><br></pre></td></tr></table></figure>
+
+<p>创建 <code>.env</code> 文件**: 在项目根目录创建 <code>.env</code> 文件，并写入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SEPOLIA_RPC_URL=&quot;_ALCHEMY_或_INFURA_的_URL&quot;</span><br><span class="line">PRIVATE_KEY=&quot;_METAMASK_私钥&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改 <code>hardhat.config.js</code></strong>:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>(<span class="string">&quot;@nomicfoundation/hardhat-toolbox&quot;</span>);</span><br><span class="line"><span class="built_in">require</span>(<span class="string">&quot;dotenv&quot;</span>).<span class="title function_">config</span>(); <span class="comment">// 引入 dotenv</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** <span class="doctag">@type</span> import(&#x27;hardhat/config&#x27;).HardhatUserConfig */</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">solidity</span>: <span class="string">&quot;0.8.20&quot;</span>,</span><br><span class="line">  <span class="attr">networks</span>: &#123;</span><br><span class="line">    <span class="attr">sepolia</span>: &#123;</span><br><span class="line">      <span class="attr">url</span>: process.<span class="property">env</span>.<span class="property">SEPOLIA_RPC_URL</span> || <span class="string">&quot;&quot;</span>,</span><br><span class="line">      <span class="attr">accounts</span>:</span><br><span class="line">        process.<span class="property">env</span>.<span class="property">PRIVATE_KEY</span> !== <span class="literal">undefined</span> ? [process.<span class="property">env</span>.<span class="property">PRIVATE_KEY</span>] : [],</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 编写部署脚本</strong></p>
+<p>在 scripts&#x2F; 文件夹下，创建一个新文件 deployCreamCoin.js。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> hre = <span class="built_in">require</span>(<span class="string">&quot;hardhat&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">main</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [deployer] = <span class="keyword">await</span> hre.<span class="property">ethers</span>.<span class="title function_">getSigners</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Deploying contracts with the account:&quot;</span>, deployer.<span class="property">address</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 部署 CreamCoin 合约</span></span><br><span class="line">  <span class="keyword">const</span> creamCoin = <span class="keyword">await</span> hre.<span class="property">ethers</span>.<span class="title function_">deployContract</span>(<span class="string">&quot;CreamCoin&quot;</span>, [deployer.<span class="property">address</span>]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">await</span> creamCoin.<span class="title function_">waitForDeployment</span>();</span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">    <span class="string">`CreamCoin deployed to: <span class="subst">$&#123;creamCoin.target&#125;</span>`</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">main</span>().<span class="title function_">catch</span>(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">error</span>(error);</span><br><span class="line">  process.<span class="property">exitCode</span> = <span class="number">1</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>5. 部署！</strong></p>
+<p>运行以下命令，将代币部署到 Sepolia 测试网。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx hardhat run scripts/deployCreamCoin.js --network sepolia</span><br></pre></td></tr></table></figure>
+
+<p>成功后，终端会输出 <code>CreamCoin deployed to: 0x...</code>。**这个 <code>0x...</code> 地址就是的奶油币合约地址，请务必保存好！可以在 <a target="_blank" rel="noopener" href="https://sepolia.etherscan.io/">Sepolia Etherscan</a> 上搜索合约地址，查看它的信息。</p>
+<h3 id="阶段二：创建社交合约-Creamunity"><a href="#阶段二：创建社交合约-Creamunity" class="headerlink" title="阶段二：创建社交合约 (Creamunity)"></a>阶段二：创建社交合约 (Creamunity)</h3><p>这个合约是项目的核心，处理留言和打赏。</p>
+<p><strong>1. 创建 Creamunity.sol 合约</strong></p>
+<p>在 <code>contracts/</code> 文件夹下创建 <code>Creamunity.sol</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">// SPDX-License-Identifier: MIT</span><br><span class="line">pragma solidity ^0.8.20;</span><br><span class="line"></span><br><span class="line">import &quot;@openzeppelin/contracts/token/ERC20/IERC20.sol&quot;; // 引入 ERC20 接口</span><br><span class="line"></span><br><span class="line">contract Creamunity &#123;</span><br><span class="line">    // --- 状态变量 ---</span><br><span class="line"></span><br><span class="line">    IERC20 public creamCoin; // 奶油币合约的引用</span><br><span class="line">    address public burnAddress = 0x000000000000000000000000000000000000dEaD; // 黑洞地址</span><br><span class="line">    uint256 public postFee = 10 * 10**18; // 每次发言消耗10个币 (假设18位小数)</span><br><span class="line">    uint256 public tipAmount = 1 * 10**18; // 每次打赏固定1个币</span><br><span class="line"></span><br><span class="line">    // --- 留言结构体 ---</span><br><span class="line">    struct Message &#123;</span><br><span class="line">        uint256 id;</span><br><span class="line">        string content; // 留言内容</span><br><span class="line">        address author; // 作者地址</span><br><span class="line">        uint256 timestamp; // 发布时间</span><br><span class="line">        uint256 totalTips; // 收到的总打赏</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 用一个数组存储所有留言</span><br><span class="line">    Message[] public messages;</span><br><span class="line">    // 用于快速通过 id 查找留言在数组中的索引</span><br><span class="line">    mapping(uint256 =&gt; uint256) private messageIndexById;</span><br><span class="line"></span><br><span class="line">    // --- 事件 ---</span><br><span class="line">    // 方便前端监听新消息和打赏</span><br><span class="line">    event NewMessage(uint256 id, address indexed author, string content, uint256 timestamp);</span><br><span class="line">    event NewTip(uint256 indexed messageId, address indexed tipper, address indexed author);</span><br><span class="line"></span><br><span class="line">    // --- 构造函数 ---</span><br><span class="line">    constructor(address _creamCoinAddress) &#123;</span><br><span class="line">        creamCoin = IERC20(_creamCoinAddress);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // --- 核心功能：发布留言 ---</span><br><span class="line">    function postMessage(string memory _content) public &#123;</span><br><span class="line">        // 1. 检查用户是否有足够的奶油币并已授权</span><br><span class="line">        //    transferFrom 会检查授权额度，如果不足或未授权，会自动失败</span><br><span class="line">        // 2. 从用户钱包转 10 个币到黑洞地址 (销毁)</span><br><span class="line">        bool sent = creamCoin.transferFrom(msg.sender, burnAddress, postFee);</span><br><span class="line">        require(sent, &quot;Token transfer failed&quot;);</span><br><span class="line"></span><br><span class="line">        // 3. 创建新留言</span><br><span class="line">        uint256 messageId = messages.length;</span><br><span class="line">        messages.push(Message(&#123;</span><br><span class="line">            id: messageId,</span><br><span class="line">            content: _content,</span><br><span class="line">            author: msg.sender,</span><br><span class="line">            timestamp: block.timestamp,</span><br><span class="line">            totalTips: 0</span><br><span class="line">        &#125;));</span><br><span class="line">        messageIndexById[messageId] = messageId; // 在这个简单模型里，id和index相同</span><br><span class="line"></span><br><span class="line">        // 4. 触发新留言事件</span><br><span class="line">        emit NewMessage(messageId, msg.sender, _content, block.timestamp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // --- 核心功能：打赏留言 ---</span><br><span class="line">    function tipMessage(uint256 _messageId) public &#123;</span><br><span class="line">        // 确保留言存在</span><br><span class="line">        require(_messageId &lt; messages.length, &quot;Message does not exist&quot;);</span><br><span class="line"></span><br><span class="line">        Message storage messageToTip = messages[messageIndexById[_messageId]];</span><br><span class="line"></span><br><span class="line">        // 打赏者不能是作者本人</span><br><span class="line">        require(msg.sender != messageToTip.author, &quot;Cannot tip your own message&quot;);</span><br><span class="line"></span><br><span class="line">        // 1. 从打赏者钱包转 1 个币给留言作者</span><br><span class="line">        bool sent = creamCoin.transferFrom(msg.sender, messageToTip.author, tipAmount);</span><br><span class="line">        require(sent, &quot;Token transfer failed&quot;);</span><br><span class="line"></span><br><span class="line">        // 2. 更新留言的总打赏额</span><br><span class="line">        messageToTip.totalTips += tipAmount;</span><br><span class="line"></span><br><span class="line">        // 3. 触发打赏事件</span><br><span class="line">        emit NewTip(_messageId, msg.sender, messageToTip.author);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // --- 读取功能 ---</span><br><span class="line">    function getAllMessages() public view returns (Message[] memory) &#123;</span><br><span class="line">        return messages;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    function getMessageCount() public view returns (uint256) &#123;</span><br><span class="line">        return messages.length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 部署 Creamunity 合约</strong></p>
+<p>创建部署脚本 scripts&#x2F;deployCreamunity.js。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> hre = <span class="built_in">require</span>(<span class="string">&quot;hardhat&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">main</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [deployer] = <span class="keyword">await</span> hre.<span class="property">ethers</span>.<span class="title function_">getSigners</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;Deploying contracts with the account:&quot;</span>, deployer.<span class="property">address</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 这里需要填入刚才部署的 CreamCoin 合约地址</span></span><br><span class="line">  <span class="keyword">const</span> creamCoinAddress = <span class="string">&quot;_CREAMCOIN_合约地址&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> creamunity = <span class="keyword">await</span> hre.<span class="property">ethers</span>.<span class="title function_">deployContract</span>(<span class="string">&quot;Creamunity&quot;</span>, [creamCoinAddress]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">await</span> creamunity.<span class="title function_">waitForDeployment</span>();</span><br><span class="line"></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(</span><br><span class="line">    <span class="string">`Creamunity deployed to: <span class="subst">$&#123;creamunity.target&#125;</span>`</span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="title function_">main</span>().<span class="title function_">catch</span>(<span class="function">(<span class="params">error</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">error</span>(error);</span><br><span class="line">  process.<span class="property">exitCode</span> = <span class="number">1</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>然后运行部署命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx hardhat run scripts/deployCreamunity.js --network sepolia</span><br></pre></td></tr></table></figure>
+
+<p>保存好输出的 <code>Creamunity</code> 合约地址。现在两个核心合约都已上线。 </p>
+<h3 id="阶段三：开发前端界面"><a href="#阶段三：开发前端界面" class="headerlink" title="阶段三：开发前端界面"></a>阶段三：开发前端界面</h3><p>前端仓库已部署到远程仓库</p>
+<h3 id="阶段四：GAS-费用代付"><a href="#阶段四：GAS-费用代付" class="headerlink" title="阶段四：GAS 费用代付"></a>阶段四：GAS 费用代付</h3><p>这个模型将一次用户操作拆分成了三个步骤：</p>
+<ol>
+<li><p><strong>前端</strong>：</p>
+<ul>
+<li><p>用户点击“发布”按钮。</p>
+</li>
+<li><p>前端向后端服务器**发送一个请求，告知“用户 <code>0xABC...</code> 需要一笔 Gas 费来发帖”。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>后端（服务器）</strong>：</p>
+<ul>
+<li><p>服务器接收到请求，验证其合法性。</p>
+</li>
+<li><p>服务器动用<strong>开发者钱包</strong>（里面有 Sepolia ETH），向用户 <code>0xABC...</code> 的地址发送一笔 ETH。</p>
+</li>
+<li><p>服务器等待这笔转账交易被确认，然后告诉前端“Gas 已到账”。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>前端</strong>：</p>
+<ul>
+<li><p>接收到后端“已到账”的通知。</p>
+</li>
+<li><p>像之前一样，正常调用 <code>approve</code> 和 <code>postMessage</code> 函数。因为用户的钱包里刚刚收到了 ETH，所以用户现在有能力支付这笔操作的 Gas 费了。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="创建后端自动转账脚本"><a href="#创建后端自动转账脚本" class="headerlink" title="创建后端自动转账脚本"></a>创建后端自动转账脚本</h3><p>使用 Node.js 和 Express 创建一个简单的后台服务，它只有一个功能：接收前端请求并给用户转账 ETH。</p>
+<p>在项目根目录 (<code>creamunity</code>) 下创建新文件夹并初始化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> backend</span><br><span class="line"><span class="built_in">cd</span> backend</span><br><span class="line">npm init -y</span><br><span class="line">npm install express ethers dotenv cors winston</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>express</code>: 用于创建 web 服务。</p>
+</li>
+<li><p><code>ethers</code>: 用于和以太坊交互。</p>
+</li>
+<li><p><code>dotenv</code>: 用于安全管理开发者私钥。</p>
+</li>
+<li><p><code>cors</code>: 解决跨域请求问题。</p>
+</li>
+<li><p><code>winston</code>: 输出日志</p>
+</li>
+</ul>
+<p><strong>在 <code>backend</code> 文件夹中创建 <code>.env</code> 文件</strong> 这个文件用来存放开发者钱包私钥</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 开发者钱包私钥</span><br><span class="line">DEVELOPER_PRIVATE_KEY=&quot;开发者钱包私钥&quot;</span><br><span class="line"></span><br><span class="line"># Sepolia RPC URL</span><br><span class="line">SEPOLIA_RPC_URL=&quot;SEPOLIA_RPC_URL&quot;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>backend</code> 文件夹中创建 <code>server.js</code> 文件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> ethers = <span class="built_in">require</span>(<span class="string">&#x27;ethers&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> cors = <span class="built_in">require</span>(<span class="string">&#x27;cors&#x27;</span>); <span class="comment">// 引入cors</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">&#x27;dotenv&#x27;</span>).<span class="title function_">config</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>()); <span class="comment">// 允许所有跨域请求</span></span><br><span class="line">app.<span class="title function_">use</span>(express.<span class="title function_">json</span>()); <span class="comment">// 解析JSON请求体</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">PORT</span> = <span class="number">3000</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// --- 初始化开发者钱包 ---</span></span><br><span class="line"><span class="keyword">const</span> provider = <span class="keyword">new</span> ethers.<span class="property">providers</span>.<span class="title class_">JsonRpcProvider</span>(process.<span class="property">env</span>.<span class="property">SEPOLIA_RPC_URL</span>);</span><br><span class="line"><span class="keyword">const</span> developerWallet = <span class="keyword">new</span> ethers.<span class="title class_">Wallet</span>(process.<span class="property">env</span>.<span class="property">DEVELOPER_PRIVATE_KEY</span>, provider);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`自动化Gas支援服务启动...`</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`开发者钱包地址: <span class="subst">$&#123;developerWallet.address&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// --- API 端点：/request-gas ---</span></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/request-gas&#x27;</span>, <span class="title function_">async</span> (req, res) =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; userAddress, amount &#125; = req.<span class="property">body</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!ethers.<span class="property">utils</span>.<span class="title function_">isAddress</span>(userAddress) || !amount) &#123;</span><br><span class="line">        <span class="keyword">return</span> res.<span class="title function_">status</span>(<span class="number">400</span>).<span class="title function_">json</span>(&#123; <span class="attr">message</span>: <span class="string">&#x27;无效的地址或金额&#x27;</span> &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`收到请求: 向 <span class="subst">$&#123;userAddress&#125;</span> 转账 <span class="subst">$&#123;ethers.utils.formatEther(amount)&#125;</span> ETH`</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> tx = &#123;</span><br><span class="line">            <span class="attr">to</span>: userAddress,</span><br><span class="line">            <span class="attr">value</span>: ethers.<span class="property">BigNumber</span>.<span class="title function_">from</span>(amount), <span class="comment">// 金额必须是 BigNumber</span></span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 开发者钱包发送交易</span></span><br><span class="line">        <span class="keyword">const</span> txResponse = <span class="keyword">await</span> developerWallet.<span class="title function_">sendTransaction</span>(tx);</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`交易已发送，Hash: <span class="subst">$&#123;txResponse.hash&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注意：这里立即返回了hash，没有等待交易确认，以提高前端响应速度</span></span><br><span class="line">        <span class="comment">// 前端会使用 provider.waitForTransaction 来等待</span></span><br><span class="line">        res.<span class="title function_">status</span>(<span class="number">200</span>).<span class="title function_">json</span>(&#123;</span><br><span class="line">            <span class="attr">message</span>: <span class="string">&#x27;转账请求已发送&#x27;</span>,</span><br><span class="line">            <span class="attr">txHash</span>: txResponse.<span class="property">hash</span>,</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (error) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">error</span>(<span class="string">&#x27;转账失败:&#x27;</span>, error);</span><br><span class="line">        res.<span class="title function_">status</span>(<span class="number">500</span>).<span class="title function_">json</span>(&#123; <span class="attr">message</span>: <span class="string">&#x27;服务器内部错误，转账失败&#x27;</span> &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="variable constant_">PORT</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`服务器正在监听端口 <span class="subst">$&#123;PORT&#125;</span>`</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建日志配置文件-logger-js"><a href="#创建日志配置文件-logger-js" class="headerlink" title="创建日志配置文件 (logger.js)"></a>创建日志配置文件 (<code>logger.js</code>)</h4><p>为了让代码更整洁，把所有日志相关的配置放进一个单独的文件里。</p>
+<p>在 <code>backend</code> 文件夹中，创建一个<strong>新的JavaScript文件</strong>，命名为 <code>logger.js</code>。</p>
+<p>将以下代码粘贴到 <code>logger.js</code> 文件中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// backend/logger.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> winston = <span class="built_in">require</span>(<span class="string">&#x27;winston&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义日志格式</span></span><br><span class="line"><span class="keyword">const</span> logFormat = winston.<span class="property">format</span>.<span class="title function_">printf</span>(<span class="function">(<span class="params">&#123; level, message, timestamp &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;timestamp&#125;</span> [<span class="subst">$&#123;level.toUpperCase()&#125;</span>]: <span class="subst">$&#123;message&#125;</span>`</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> logger = winston.<span class="title function_">createLogger</span>(&#123;</span><br><span class="line">  <span class="attr">format</span>: winston.<span class="property">format</span>.<span class="title function_">combine</span>(</span><br><span class="line">    winston.<span class="property">format</span>.<span class="title function_">timestamp</span>(&#123; <span class="attr">format</span>: <span class="string">&#x27;YYYY-MM-DD HH:mm:ss&#x27;</span> &#125;),</span><br><span class="line">    logFormat</span><br><span class="line">  ),</span><br><span class="line"></span><br><span class="line">  <span class="attr">transports</span>: [</span><br><span class="line">    <span class="keyword">new</span> winston.<span class="property">transports</span>.<span class="title class_">File</span>(&#123; </span><br><span class="line">        <span class="attr">filename</span>: <span class="string">&#x27;server.log&#x27;</span>,</span><br><span class="line">        <span class="attr">level</span>: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">    &#125;),</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> winston.<span class="property">transports</span>.<span class="title class_">Console</span>(&#123;</span><br><span class="line">        <span class="attr">format</span>: winston.<span class="property">format</span>.<span class="title function_">combine</span>(</span><br><span class="line">            winston.<span class="property">format</span>.<span class="title function_">timestamp</span>(&#123; <span class="attr">format</span>: <span class="string">&#x27;YYYY-MM-DD HH:mm:ss&#x27;</span> &#125;),</span><br><span class="line">            logFormat</span><br><span class="line">        ),</span><br><span class="line">        <span class="attr">level</span>: <span class="string">&#x27;info&#x27;</span></span><br><span class="line">    &#125;)</span><br><span class="line">  ],</span><br><span class="line"></span><br><span class="line">  <span class="attr">exceptionHandlers</span>: [</span><br><span class="line">    <span class="keyword">new</span> winston.<span class="property">transports</span>.<span class="title class_">File</span>(&#123; <span class="attr">filename</span>: <span class="string">&#x27;exceptions.log&#x27;</span> &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = logger;</span><br></pre></td></tr></table></figure>
+
+<p><strong>现在会看到：</strong></p>
+<ul>
+<li><p><strong>控制台输出</strong>：终端里的所有日志，现在每一行前面都会有 <code>2025-06-13 15:52:00 [INFO]:</code> 这样的格式，并且带有颜色。</p>
+</li>
+<li><p><strong>新的日志文件</strong>：在 <code>backend</code> 文件夹下，会自动创建一个名为 <code>server.log</code> 的文件。</p>
+</li>
+<li><p><strong>文件内容</strong>：打开 <code>server.log</code>，会发现里面记录了和控制台完全一样的、带有时间戳的日志信息。</p>
+</li>
+</ul>
+<h3 id="阶段五：上线后端服务"><a href="#阶段五：上线后端服务" class="headerlink" title="阶段五：上线后端服务"></a>阶段五：上线后端服务</h3><p>安装 Nginx ，用来作为反向代理。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install nginx -y</span><br></pre></td></tr></table></figure>
+
+<p>安装 PM2 (进程管理器)</p>
+<p>如果直接用 <code>node server.js</code> 运行的后端，当关闭SSH连接时，程序就会中断。PM2是一个进程管理器，它能让的Node.js应用在后台稳定运行，并在服务器重启后自动启动。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> npm install -g pm2</span><br></pre></td></tr></table></figure>
+
+<p>现在需要把本地的 <code>creamunity</code> 文件夹整个上传到VPS上。</p>
+<ul>
+<li><p>将本地的 <code>creamunity</code> 项目推送到一个私有的GitHub或GitLab仓库。</p>
+</li>
+<li><p>在VPS上安装Git：<code>sudo apt install git -y</code>。</p>
+</li>
+<li><p>在VPS上找一个合适的位置（如 <code>/var/www/</code>）克隆项目：</p>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">mkdir</span> -p /var/www</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chown</span> -R $(<span class="built_in">whoami</span>) /var/www </span><br><span class="line"><span class="built_in">cd</span> /var/www</span><br><span class="line"><span class="comment"># 克隆项目</span></span><br><span class="line">git <span class="built_in">clone</span> GIT_REPOSITORY_URL</span><br></pre></td></tr></table></figure>
+
+<p>以后更新代码，只需要在服务器上运行 <code>git pull</code> 即可。</p>
+<p>代码上传后，需要配置并启动后端。<code>.env</code>文件因为包含密钥，通常不会上传到Git。需要在服务器上手动创建它。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /var/www/creamunity/backend</span><br><span class="line">npm install</span><br><span class="line">nano .<span class="built_in">env</span></span><br></pre></td></tr></table></figure>
+
+<p>在打开的编辑器中，把你本地 <code>.env</code> 文件里的所有内容（<code>DEVELOPER_PRIVATE_KEY</code>, <code>ETHERSCAN_API_KEY</code>等）复制粘贴进去。按 <code>Ctrl+X</code>，然后按 <code>Y</code>，再按回车来保存并退出。</p>
+<p><strong>用 PM2 启动后端服务</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pm2 start server.js --name <span class="string">&quot;cream-backend&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>--name</code> 参数为应用起了一个名字，方便管理。</p>
+<h4 id="配置-Nginx-反向代理"><a href="#配置-Nginx-反向代理" class="headerlink" title="配置 Nginx (反向代理)"></a>配置 Nginx (反向代理)</h4><p>这是最关键的一步，要告诉Nginx：</p>
+<ul>
+<li><p>当用户访问的IP时，显示 <code>frontend</code> 文件夹里的静态文件。</p>
+</li>
+<li><p>当有发往 <code>/api/</code> 或 <code>/request-</code> 等路径的请求时，将这些请求<strong>转发</strong>给正在 <code>localhost:3000</code> 运行的后端Node.js服务。</p>
+</li>
+</ul>
+<p>创建 Nginx 配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nano /etc/nginx/sites-available/creamunity</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">listen</span> [::]:<span class="number">80</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">server_name</span> api.domain.com; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="comment"># 将所有请求都转发给后端Node.js服务</span></span><br><span class="line">        <span class="attribute">proxy_pass</span> http://localhost:3000;</span><br><span class="line">        <span class="attribute">proxy_http_version</span> <span class="number">1</span>.<span class="number">1</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Upgrade <span class="variable">$http_upgrade</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Connection <span class="string">&#x27;upgrade&#x27;</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">        <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">        <span class="attribute">proxy_cache_bypass</span> <span class="variable">$http_upgrade</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后启用配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">rm</span> /etc/nginx/sites-enabled/default</span><br><span class="line"><span class="comment"># 创建一个从 available 到 enabled 的符号链接来启用配置</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">ln</span> -s /etc/nginx/sites-available/creamunity/etc/nginx/sites-enabled/</span><br></pre></td></tr></table></figure>
+
+<p>测试并重启 Nginx</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> nginx -t  <span class="comment"># 测试配置语法是否有错误</span></span><br><span class="line"><span class="built_in">sudo</span> systemctl restart nginx <span class="comment"># 重启Nginx使配置生效</span></span><br></pre></td></tr></table></figure>
+
+<p>现在服务已经可以通过域名访问，请务必为API启用HTTPS加密。在<strong>VPS</strong>上运行 <code>certbot</code> (在之前的步骤中已经安装过):</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install certbot python3-certbot-nginx -y</span><br><span class="line"><span class="built_in">sudo</span> certbot --nginx -d api.your-domain.com</span><br></pre></td></tr></table></figure>
+
+<p>Certbot会引导完成几个简单的步骤，然后它会自动获取SSL证书，并自动修改Nginx配置以启用HTTPS。完成后，所有到 <code>http://api.your-domain.com</code> 的请求都会被自动重定向到 <code>https://</code>。</p>
+<p>至此，一个全栈DApp社区项目从本地部署到了线上生产环境</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2025/07/09/%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%8ADApp%E7%A4%BE%E5%8C%BA%E5%BC%80%E5%8F%91%E5%AE%9E%E5%BD%95/">https://floraison.io/2025/07/09/%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%8ADApp%E7%A4%BE%E5%8C%BA%E5%BC%80%E5%8F%91%E5%AE%9E%E5%BD%95/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/06/05/%E5%8C%BF%E5%90%8D%E6%B3%A8%E5%86%8C%E8%99%9A%E6%8B%9F%E4%BF%A1%E7%94%A8%E5%8D%A1/">匿名注册虚拟信用卡</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
