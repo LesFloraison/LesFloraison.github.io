@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>浅谈 Vulkan1.4 标准与 Descriptor Buffers 扩展 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">浅谈 Vulkan1.4 标准与 Descriptor Buffers 扩展</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 8, 2025&nbsp;&nbsp;20:28:18</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>Vulkan1.4 标准于2024年12月3日发布，在接近一年时间几乎没有引起任何讨论。这里简要列出1.4标准的新增内容：</p>
+<ul>
+<li><p>串流传输：Vulkan 1.4 要求移动、跨平台应用能够串流大量数据至设备，同时保证高性能的渲染。</p>
+</li>
+<li><p>之前对高性能应用至关重要的可选扩展和功能现时在Vulkan 1.4中是强制性的，这确保了多平台的可信赖可用性。它们包括 <code>push descriptors</code>（描述符推送）、<code>dynamic rendering local reads</code>（动态渲染本地读取）和 <code>scalar block layouts</code>（标量区块布局）。</p>
+</li>
+<li><p>包括 <code>VK_KHR_maintenance6</code> 在内的维护扩展现已成为 Vulkan 1.4 核心规范的一部分。</p>
+</li>
+<li><p>高达8个独立渲染目标的 8K 渲染现在已保证支持，同时还有其他几项限制的增加。</p>
+</li>
+</ul>
+<p>标准没有引入任何新渲染特性，所做的仅是将部分扩展并入核心。可见此次 API 升级对于大部分图形项目毫无吸引力，所带来的影响也仅仅是在碎片化的移动平台强制兼容部分扩展。我将跳过此次的标准解读，转而去探索一些可能会具备潜力的扩展。 </p>
+<h2 id="Descriptor-的经典工作流"><a href="#Descriptor-的经典工作流" class="headerlink" title="Descriptor 的经典工作流"></a>Descriptor 的经典工作流</h2><p>在 Vulkan1.3 标准引入 Descriptor Buffers 扩展之前，Vulkan 中的资源绑定一直遵循 Descriptor 的经典模型（中文称之为描述符，个人并不喜欢这个词不达意的翻译）从创建更新到销毁的生命周期。而 Descriptor 的一系列概念存在的原因，是在管线&#x2F;着色器被创建之前，提前明确资源绑定的一切信息。（Descriptor 精确地告诉驱动：“我将要运行的着色器，在绑定点0需要一个UBO，在绑定点1需要一个纹理采样器）这极大的减少了与驱动程序的交互次数，显著降低了CPU开销。相反的，在 OpenGL 等旧 API 时代，驱动程序只有在绘制调用（Draw Call）那一刻才能拼凑出着色器需要的所有资源，这使得提前优化变得非常困难。</p>
+<p>事实上，Descriptor 本身并不直接储存资源，它储存的是对于已创建资源（UBO，SSBO，Sampler）的地址引用。同时它还是一块不透明的内存，由驱动程序负责维护。在此之上，又进一步划分出了 <code>DescriptorSetLayout</code>，<code>DescriptorPool</code>，<code>DescriptorSet</code> 等概念，对于初学者的理解产生不便。</p>
+<ul>
+<li><p>DescriptorSetLayout：如果一个 Descriptor 是一个C++函数，那么描述符就是这个函数的参数列表。它定义类型。比如，“需要一个UBO和一个纹理”。</p>
+</li>
+<li><p>DescriptorSet：按照 DescriptorSetLayout 给定的“形参列表”提供实例。比如，“具体用这个<code>camera_buffer</code>作为UBO，用这张<code>brick_texture.jpg</code>作为纹理”。</p>
+</li>
+<li><p>DescriptorPool：用以分配 DescriptorSet 的内存池，这个概念似乎并没有什么存在的必要。</p>
+</li>
+</ul>
+<p>对于 Layout&#x2F;Set 的分离与解耦，允许用同一个布局来创建多个不同的管线，只需绑定管线&#x2F;着色器各自的<code>VkDescriptorSet</code>即可。 </p>
+<p>一个经典的 Descriptor 工作流示范如下：</p>
+<h3 id="准备阶段-初始化时"><a href="#准备阶段-初始化时" class="headerlink" title="准备阶段 (初始化时)"></a>准备阶段 (初始化时)</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建 DescriptorSetLayout</span></span><br><span class="line">VkDescriptorSetLayoutBinding uboBinding = &#123;<span class="number">0</span>, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, <span class="number">1</span>, VK_SHADER_STAGE_VERTEX_BIT, <span class="literal">nullptr</span>&#125;;</span><br><span class="line">VkDescriptorSetLayoutBinding samplerBinding = &#123;<span class="number">1</span>, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, <span class="number">1</span>, VK_SHADER_STAGE_FRAGMENT_BIT, <span class="literal">nullptr</span>&#125;;</span><br><span class="line">std::vector&lt;VkDescriptorSetLayoutBinding&gt; bindings = &#123;uboBinding, samplerBinding&#125;;</span><br><span class="line"></span><br><span class="line">VkDescriptorSetLayoutCreateInfo layoutInfo = &#123;VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO&#125;;</span><br><span class="line">layoutInfo.bindingCount = bindings.<span class="built_in">size</span>();</span><br><span class="line">layoutInfo.pBindings = bindings.<span class="built_in">data</span>();</span><br><span class="line"><span class="built_in">vkCreateDescriptorSetLayout</span>(device, &amp;layoutInfo, <span class="literal">nullptr</span>, &amp;descriptorSetLayout);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 DescriptorPool</span></span><br><span class="line">VkDescriptorPoolSize poolSize1 = &#123;VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, <span class="number">100</span>&#125;;</span><br><span class="line">VkDescriptorPoolSize poolSize2 = &#123;VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, <span class="number">100</span>&#125;;</span><br><span class="line">std::vector&lt;VkDescriptorPoolSize&gt; poolSizes = &#123;poolSize1, poolSize2&#125;;</span><br><span class="line"></span><br><span class="line">VkDescriptorPoolCreateInfo poolInfo = &#123;VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO&#125;;</span><br><span class="line">poolInfo.maxSets = <span class="number">100</span>;</span><br><span class="line">poolInfo.poolSizeCount = poolSizes.<span class="built_in">size</span>();</span><br><span class="line">poolInfo.pPoolSizes = poolSizes.<span class="built_in">data</span>();</span><br><span class="line"><span class="built_in">vkCreateDescriptorPool</span>(device, &amp;poolInfo, <span class="literal">nullptr</span>, &amp;descriptorPool);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="更新阶段-每次材质变化时"><a href="#更新阶段-每次材质变化时" class="headerlink" title="更新阶段 (每次材质变化时)"></a>更新阶段 (每次材质变化时)</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从池中分配一个 DescriptorSet</span></span><br><span class="line">VkDescriptorSetAllocateInfo allocInfo = &#123;VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO&#125;;</span><br><span class="line">allocInfo.descriptorPool = descriptorPool;</span><br><span class="line">allocInfo.descriptorSetCount = <span class="number">1</span>;</span><br><span class="line">allocInfo.pSetLayouts = &amp;descriptorSetLayout;</span><br><span class="line"><span class="built_in">vkAllocateDescriptorSets</span>(device, &amp;allocInfo, &amp;descriptorSet);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 准备要写入的数据</span></span><br><span class="line">VkDescriptorBufferInfo bufferInfo = &#123;uniformBuffer, <span class="number">0</span>, <span class="built_in">sizeof</span>(MVP)&#125;;</span><br><span class="line">VkDescriptorImageInfo imageInfo = &#123;sampler, imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 vkUpdateDescriptorSets 更新</span></span><br><span class="line">VkWriteDescriptorSet writeUbo = &#123;VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET&#125;;</span><br><span class="line">writeUbo.dstSet = descriptorSet;</span><br><span class="line">writeUbo.dstBinding = <span class="number">0</span>;</span><br><span class="line">writeUbo.descriptorCount = <span class="number">1</span>;</span><br><span class="line">writeUbo.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;</span><br><span class="line">writeUbo.pBufferInfo = &amp;bufferInfo;</span><br><span class="line"></span><br><span class="line">VkWriteDescriptorSet writeSampler = &#123;VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET&#125;;</span><br><span class="line">writeSampler.dstSet = descriptorSet;</span><br><span class="line">writeSampler.dstBinding = <span class="number">1</span>;</span><br><span class="line">writeSampler.descriptorCount = <span class="number">1</span>;</span><br><span class="line">writeSampler.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;</span><br><span class="line">writeSampler.pImageInfo = &amp;imageInfo;</span><br><span class="line"></span><br><span class="line">std::vector&lt;VkWriteDescriptorSet&gt; writes = &#123;writeUbo, writeSampler&#125;;</span><br><span class="line"><span class="built_in">vkUpdateDescriptorSets</span>(device, writes.<span class="built_in">size</span>(), writes.<span class="built_in">data</span>(), <span class="number">0</span>, <span class="literal">nullptr</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="绑定阶段-录制CommandBuffer时"><a href="#绑定阶段-录制CommandBuffer时" class="headerlink" title="绑定阶段 (录制CommandBuffer时)"></a>绑定阶段 (录制CommandBuffer时)</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 绑定这个刚刚更新好的 DescriptorSet</span></span><br><span class="line"><span class="built_in">vkCmdBindDescriptorSets</span>(</span><br><span class="line">    commandBuffer,</span><br><span class="line">    VK_PIPELINE_BIND_POINT_GRAPHICS,</span><br><span class="line">    pipelineLayout,</span><br><span class="line">    <span class="number">0</span>, <span class="comment">// firstSet</span></span><br><span class="line">    <span class="number">1</span>, <span class="comment">// setCount</span></span><br><span class="line">    &amp;descriptorSet, <span class="comment">// 传入具体的Set对象</span></span><br><span class="line">    <span class="number">0</span>,</span><br><span class="line">    <span class="literal">nullptr</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ... 然后 vkCmdDraw ...</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="描述符缓冲区-Descriptor-Buffers"><a href="#描述符缓冲区-Descriptor-Buffers" class="headerlink" title="描述符缓冲区 (Descriptor Buffers)"></a>描述符缓冲区 (Descriptor Buffers)</h2><p>Descriptor Buffers 是 Vulkan1.3 标准引入的全新资源绑定方式。Descriptor 自此将变得内存透明，你可以自由规划管线的资源分布：比如所有管线共用一个 Descriptor Buffer，也可以为每个管线各自维护其专属的 Descriptor Buffer（有点类似于 DescriptorSet）。在新工作流中，只存在 Layout 与 Buffer 两个概念。</p>
+<p>传统 DescriptorSet 被视为内存不透明的API对象。请求 <code>vkAllocateDescriptorSets</code>后，驱动程序自己管理内存，然后通过一个结构化的API调用 (<code>vkUpdateDescriptorSets</code>) 去更新这些对象。</p>
+<ul>
+<li>流程: <code>创建池 (Pool) -&gt; 分配集 (Set) -&gt; 更新集 (Update) -&gt; 绑定集 (Bind)</code></li>
+</ul>
+<p>而 Descriptor Buffers 为普通的缓冲区（VkBuffer），就像顶点数据或Uniform数据一样。需要手动创建，自己计算好数据应该放在缓冲区的哪个位置，然后直接用 memcpy 把描述符的“地址”或“句柄”写入这个缓冲区。</p>
+<ul>
+<li>流程: <code>创建缓冲区 (Buffer) -&gt; 获取资源句柄 (Handle) -&gt; 写入缓冲区 (Write) -&gt; 绑定缓冲区 (Bind)</code></li>
+</ul>
+<p>需要注意的是，Vulkan1.4 并未将 Descriptor Buffers 扩展并入核心，在创建 <code>VkInstance</code> 和 <code>VkDevice</code> 时，必须在启用列表里加入 <code>VK_EXT_descriptor_buffer</code> 扩展。同时，<code>VkDescriptorSetLayout</code> 仍被需要，它现在主要用于<strong>定义着色器期望的描述符在缓冲区中的内存布局</strong>，在创建 <code>VkDescriptorSetLayout</code> 时，必须添加一个新的标志 <code>VK_DESCRIPTOR_SET_LAYOUT_CREATE_DESCRIPTOR_BUFFER_BIT_EXT</code>。</p>
+<h3 id="创建-DescriptorSetLayout"><a href="#创建-DescriptorSetLayout" class="headerlink" title="创建 DescriptorSetLayout"></a>创建 DescriptorSetLayout</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">VkDescriptorSetLayoutCreateInfo layoutInfo&#123;&#125;;</span><br><span class="line">layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;</span><br><span class="line">layoutInfo.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_DESCRIPTOR_BUFFER_BIT_EXT; <span class="comment">// 添加这个标志</span></span><br><span class="line">layoutInfo.bindingCount = <span class="number">1</span>;</span><br><span class="line">layoutInfo.pBindings = &amp;samplerLayoutBinding;</span><br></pre></td></tr></table></figure>
+
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><h3 id="创建描述符缓冲区（替换-VkDescriptorPool-VkDescriptorSet）"><a href="#创建描述符缓冲区（替换-VkDescriptorPool-VkDescriptorSet）" class="headerlink" title="创建描述符缓冲区（替换 VkDescriptorPool&#x2F; VkDescriptorSet）"></a>创建描述符缓冲区（替换 <code>VkDescriptorPool</code>&#x2F; <code>VkDescriptorSet</code>）</h3><p>这里注意创建 buffer 时，要特别添加 <code>VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT</code> 、 <code>VK_BUFFER_USAGE_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT</code>  和<code>VK_BUFFER_USAGE_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT</code> 三个标志。并映射一块 CPU 侧可见的内存，以后针对 GPU 侧的资源更新只需直接写入这块内存即可。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">VkDeviceSize descriptorSetLayoutSize;</span><br><span class="line"><span class="built_in">vkGetDescriptorSetLayoutSizeEXT</span>(device, universalDescriptorSetLayout, &amp;descriptorSetLayoutSize);</span><br><span class="line">VkDeviceSize bufferSize = descriptorSetLayoutSize;</span><br><span class="line"><span class="built_in">createBufferWithAddress</span>(bufferSize, VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT | VK_BUFFER_USAGE_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, descriptorBuffer, descriptorBufferMemory);</span><br><span class="line"><span class="built_in">vkMapMemory</span>(device, descriptorBufferMemory, <span class="number">0</span>, bufferSize, <span class="number">0</span>, &amp;mappedDescriptorBuffer);</span><br></pre></td></tr></table></figure>
+
+<h3 id="-1"><a href="#-1" class="headerlink" title=""></a></h3><h3 id="将资源直接写入缓冲区（替换-vkUpdateDescriptorSets）"><a href="#将资源直接写入缓冲区（替换-vkUpdateDescriptorSets）" class="headerlink" title="将资源直接写入缓冲区（替换 vkUpdateDescriptorSets）"></a>将资源直接写入缓冲区（替换 <code>vkUpdateDescriptorSets</code>）</h3><p>这里我们假设，为每个管线分配一个独立的 Descriptor Buffer，省去了从大 Buffer 中通过偏移量搜索目标管线所对应的 Descriptor 位置这一繁琐步骤。注意，不同的硬件设备所对应的 SamplerDescriptorSize 可能会有所差异，这将会对 offset 的计算产生影响，需要提前查询。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 辅助函数</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">getAndCopyDescriptor</span><span class="params">(VkDevice device, VkDescriptorGetInfoEXT&amp; getInfo, <span class="type">size_t</span> descriptorSize, <span class="type">void</span>* dest)</span> </span>&#123;</span><br><span class="line">	<span class="type">char</span>* descriptorData = (<span class="type">char</span>*)<span class="built_in">alloca</span>(descriptorSize);</span><br><span class="line">	<span class="built_in">vkGetDescriptorEXT</span>(device, &amp;getInfo, descriptorSize, descriptorData);</span><br><span class="line">	<span class="built_in">memcpy</span>(dest, descriptorData, descriptorSize);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">VkDeviceSize offset_0_ubo, offset_1_samplers;</span><br><span class="line"><span class="built_in">vkGetDescriptorSetLayoutBindingOffsetEXT</span>(device, MPipeline::universalDescriptorSetLayout, <span class="number">0</span>, &amp;offset_0_ubo);</span><br><span class="line"><span class="built_in">vkGetDescriptorSetLayoutBindingOffsetEXT</span>(device, MPipeline::universalDecriptorSetLayout, <span class="number">1</span>, &amp;offset_1_samplers);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查询当前硬件设备 SamplerDescriptorSize 所对应大小</span></span><br><span class="line">VkPhysicalDeviceDescriptorBufferPropertiesEXT descriptorBufferProps = &#123;&#125;;</span><br><span class="line">descriptorBufferProps.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT;</span><br><span class="line">VkPhysicalDeviceProperties2 props = &#123;&#125;;</span><br><span class="line">props.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;</span><br><span class="line">props.pNext = &amp;descriptorBufferProps;</span><br><span class="line"><span class="built_in">vkGetPhysicalDeviceProperties2</span>(physicalDevice, &amp;props);</span><br><span class="line"><span class="type">const</span> VkDeviceSize samplerDescriptorSize = descriptorBufferProps.combinedImageSamplerDescriptorSize; </span><br><span class="line"></span><br><span class="line"><span class="comment">// --- Binding 0: Uniform Buffer ---</span></span><br><span class="line">VkDescriptorGetInfoEXT getInfo = &#123; VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT &#125;;</span><br><span class="line">getInfo.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;</span><br><span class="line">VkDescriptorAddressInfoEXT addrInfo = &#123; VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT &#125;;</span><br><span class="line">addrInfo.address = <span class="built_in">getBufferDeviceAddress</span>(uniformBuffer);</span><br><span class="line">addrInfo.range = UNIFROM_BUFFER_SIZE;</span><br><span class="line">getInfo.data.pUniformBuffer = &amp;addrInfo;</span><br><span class="line"><span class="built_in">getAndCopyDescriptor</span>(device, getInfo, descriptorBufferProps.uniformBufferDescriptorSize, bufferBase + offset_0_ubo);</span><br><span class="line"></span><br><span class="line"><span class="comment">// --- Binding 1: Sampler Array (512 elements) ---</span></span><br><span class="line">getInfo.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; image2DInfos.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">    getInfo.data.pCombinedImageSampler = &amp;image2DInfos[i];</span><br><span class="line"></span><br><span class="line">    <span class="type">void</span>* dest = bufferBase + offset_1_samplers + (i * samplerDescriptorSize);</span><br><span class="line">    <span class="built_in">getAndCopyDescriptor</span>(device, getInfo, samplerDescriptorSize, dest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="绑定描述符缓冲区（替换-vkCmdBindDescriptorSets）"><a href="#绑定描述符缓冲区（替换-vkCmdBindDescriptorSets）" class="headerlink" title="绑定描述符缓冲区（替换 vkCmdBindDescriptorSets）"></a>绑定描述符缓冲区（替换 <code>vkCmdBindDescriptorSets</code>）</h3><p>在命令缓冲区录制期间，绑定方式也完全改变了。同时，由于为每一个管线分配了独立的 Buffer，所以这里不需要计算大 Buffer 中的偏移量。至此，已通过 Descriptor Buffers 向管线完成资源传递。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 绑定包含所有描述符数据的大缓冲区</span></span><br><span class="line">VkDescriptorBufferBindingInfoEXT bindingInfo&#123;&#125;;</span><br><span class="line">bindingInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT;</span><br><span class="line">bindingInfo.address = <span class="built_in">getBufferDeviceAddress</span>(my_descriptor_buffer); <span class="comment">// 获取缓冲区的设备地址</span></span><br><span class="line">bindingInfo.usage = VK_BUFFER_USAGE_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT |</span><br><span class="line">                    VK_BUFFER_USAGE_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT;</span><br><span class="line"></span><br><span class="line"><span class="built_in">vkCmdBindDescriptorBuffersEXT</span>(cmd, <span class="number">1</span>, &amp;bindingInfo);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置当前绘制调用要使用的偏移量</span></span><br><span class="line"><span class="type">uint32_t</span> bufferIndex = <span class="number">0</span>;</span><br><span class="line">VkDeviceSize bufferOffset = <span class="number">0</span>; <span class="comment">// 由于为每一个管线分配了独立的 Buffer，所以这里不需要计算大 Buffer 中的偏移量</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">vkCmdSetDescriptorBufferOffsetsEXT</span>(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, <span class="comment">/*firstSet=*/</span><span class="number">0</span>, <span class="comment">/*setCount=*/</span><span class="number">1</span>, &amp;bufferIndex, &amp;offset);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ... 然后发起 vkCmdDraw ...</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="碎碎念：毫无价值的扩展"><a href="#碎碎念：毫无价值的扩展" class="headerlink" title="碎碎念：毫无价值的扩展"></a>碎碎念：毫无价值的扩展</h2><p>直到整个完成向 Descriptor Buffers 的迁移后，我才意识到重构并未带来任何实际意义上的好处。经典 Descriptor 模型虽然繁琐，每次资源更新之前需要填写若干冗长的结构（<code>VkWriteDescriptorSet</code>，<code>VkDescriptorImageInfo</code>，<code>VkDescriptorBufferInfo</code>等），但也因此保留直观的特点和高可维护性。相反的，<code>Descriptor Buffers</code> 扩展为了资源更新的灵活性（不再通过 API 发起更新请求，转而直接写入被映射过的内存），将原本由驱动程序维护的不透明内存模型直接暴露给开发者，同时手动计算资源之间 offset ，极大增加了开发者的心智负担（尤其是极端情况下，所有管线共用一个 Buffer，真正意义上的大 offset 嵌套小 offset），稍有不慎就是 UB。而这一切的带来的好处仅仅只是少调用几次资源更新的 API，降低 CPU 侧的开销。由于驱动程序对于 API 的实现是黑箱，一次更新调用对 CPU 的开销也无从得知，但所带来的零星性能提升也不足以弥补失去的可维护性与可读性。同时地，截帧工具对 Descriptor Buffers 扩展的支持程度普遍不高，大量在图形程序中使用此扩展或为调试带来不便。</p>
+<p>因此，我不认为 Descriptor Buffers 具有替代经典 Descriptor 流程的潜力，甚至 Vulkan1.4 标准也未将其收入进核心。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2025/09/08/">https://floraison.io/2025/09/08/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/07/09/">区块链上DApp社区开发实录</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>

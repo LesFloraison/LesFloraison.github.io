@@ -13,7 +13,7 @@
 
 
 
-<title>在IPv4网络环境下SSH登录IPv6单栈VPS的方法 | Floraison</title>
+<title>匿名注册虚拟信用卡 | Floraison</title>
 
 
 
@@ -196,7 +196,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">在IPv4网络环境下SSH登录IPv6单栈VPS的方法</h1>
+            <h1 class="post-title">匿名注册虚拟信用卡</h1>
             
                 <div class="post-meta">
                     
@@ -205,7 +205,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">May 16, 2025&nbsp;&nbsp;12:40:34</a>
+                        Date: <a href="#">June 5, 2025&nbsp;&nbsp;16:21:32</a>
                         </span>
                     
                     
@@ -214,72 +214,23 @@
         </header>
 
         <div class="post-content">
-            <p>本文介绍一种 <strong>不使用跳板机</strong>、<strong>在只有公网 IPv4 的本地网络下，登录仅有 IPv6 地址的 VPS</strong> 的实用方法。</p>
-<h2 id="背景问题"><a href="#背景问题" class="headerlink" title="背景问题"></a>背景问题</h2><p>相较于双栈 VPS，IPv6-only 的 VPS 在一般情况下具有更好的性能与带宽，且价格相对较低。而国内大多数运营商仍然<strong>默认仅提供 IPv4 网络</strong>，导致<strong>无法从本地直接连接 IPv6-only 的 VPS</strong>，包括最基本的 SSH 登录操作。</p>
-<p>常见的解决方法是：</p>
-<ul>
-<li><p>配置双栈跳板机或中转服务器</p>
-</li>
-<li><p>使用 NAT64 &#x2F; IPv6 隧道</p>
-</li>
-</ul>
-<p>这里提供一种利用Cloudflare反向代理，在只有 IPv4 的网络环境下，登录一个仅有 IPv6 地址的远程 VPS，且不需要额外跳板机的简单方法。</p>
-<h2 id="核心思路"><a href="#核心思路" class="headerlink" title="核心思路"></a>核心思路</h2><ol>
-<li><p>在 IPv6-only 的 VPS 上部署一个 <strong>VLESS + WebSocket + TLS</strong> 代理服务</p>
-</li>
-<li><p>使用 <strong>Cloudflare 的反向代理</strong></p>
-</li>
-<li><p>本地通过代理连接到 VPS，获取公网IPv6</p>
-</li>
-<li><p>使用 <code>ssh</code> 命令，通过代理通道访问 VPS 自身，从而实现登录</p>
-</li>
-</ol>
-<p>搭建方法步骤</p>
-<h3 id="1-安装代理面板（以X-UI为例）"><a href="#1-安装代理面板（以X-UI为例）" class="headerlink" title="1. 安装代理面板（以X-UI为例）"></a>1. 安装代理面板（以X-UI为例）</h3><p>远程SSH登录VPS，以root用户执行安装脚本：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash &lt;(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/956bf85bbac978d56c0e319c5fac2d6db7df9564/install.sh) 0.3.4.4</span><br></pre></td></tr></table></figure>
-
-<p>注意，位于IPv4网络环境下将无法访问纯IPv6的远程VPS！一般情况下，运营商会为蜂窝流量分配公网IPv6地址。可以为PC分享移动热点，暂时获得公网IPv6以完成节点配置。</p>
-<h3 id="2-配置代理节点"><a href="#2-配置代理节点" class="headerlink" title="2.配置代理节点"></a>2.配置代理节点</h3><p>在浏览器访问 [VPS的IPv6地址]:X-UI的端口号，访问X-UI面板。</p>
-<p><img src="https://raw.githubusercontent.com/floraison-io/imgRepo/refs/heads/master/img/2025-5-16.png"></p>
-<p>左侧边栏点击入站列表，新建：</p>
-<ul>
-<li><p>备注填写 vless+ws，协议选择 vless</p>
-</li>
-<li><p>注意，由于 Cloudflare 官方只支持 <strong>HTTP(S)&#x2F;WebSocket 等基于 HTTP 协议的反向代理服务</strong>。所以网络选择 ws，端口填写 https 常用端口，推荐8443。</p>
-</li>
-<li><p>开启tls加密需要用到证书和密钥，这里暂时不开启。</p>
-</li>
-</ul>
-<h3 id="3-配置-Cloudflare-反代"><a href="#3-配置-Cloudflare-反代" class="headerlink" title="3. 配置 Cloudflare 反代"></a>3. 配置 Cloudflare 反代</h3><ul>
-<li><p>添加域名托管到 Cloudflare</p>
-</li>
-<li><p>将子域名（如 <code>vps.example.com</code>）的 <strong>AAAA 记录</strong>指向 VPS 的 IPv6 地址</p>
-</li>
-<li><p>启用橙色小云朵（Cloudflare 代理）</p>
-</li>
-</ul>
-<p>这使得来自 IPv4-only 网络的连接能通过 Cloudflare 的全球 CDN 节点接入，并转发到 IPv6-only 的 VPS。</p>
-<h3 id="4-本地配置代理客户端"><a href="#4-本地配置代理客户端" class="headerlink" title="4. 本地配置代理客户端"></a>4. 本地配置代理客户端</h3><p>在X-UI面板复制节点链接，使用 v2rayN 等客户端添加 VLESS 节点，编辑节点配置：</p>
-<p>将节点的网络地址，从 VPS 的 IPv6 修改为在 Cloudflare 上添加的子域名。</p>
-<p>连接成功后，相当于在本地获取一个具备公网 IPv6 的出口代理，所有出站 TCP 流量都可以通过这条通道发送到公网。</p>
-<h3 id="5-使用代理通道登录-VPS-自身"><a href="#5-使用代理通道登录-VPS-自身" class="headerlink" title="5. 使用代理通道登录 VPS 自身"></a>5. 使用代理通道登录 VPS 自身</h3><p>由于代理服务部署在 VPS 上，VPS 会收到 SSH 请求（即便目标地址是它自己），于是可以这样登录：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@&lt;VPS的IPv6地址&gt;</span><br></pre></td></tr></table></figure>
-
-
-
-
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>事实上，Cloudflare 只能转发 HTTP &#x2F; WebSocket 协议。之所以可以 SSH 远程登录，是因为：</p>
-<ol>
-<li><p><strong>通过 Cloudflare 成功连上了 VPS 上的 XRay 节点（ HTTP 流量 ）</strong></p>
-</li>
-<li><p><strong>在本地代理客户端内发起的 SSH 请求，被 XRay 作为普通 TCP 流量转发</strong></p>
-</li>
-<li><p><strong>目标地址就是 VPS 自己的 IPv6:22 端口</strong></p>
-</li>
-<li><p><strong>VPS 上的 XRay 再反向连接自己，完成了连接</strong></p>
-</li>
-</ol>
-<p>等效于通过一条 Web 通道获取公网 IPv6 出口，然后从 VPS 内部去连接 SSH 服务，其实这台 VPS 本身可以被视作跳板机。</p>
+            <p>本文介绍一种匿名开通虚拟信用卡的思路，避免真实证件信息和手机号码。</p>
+<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>在互联网上，笔者最为厌恶的事情莫过于两件。其一是KYC实名，上传证件照片&#x2F;拍摄大头是无法接受的。其二是绑定+86，实际上使用+86号码的注册行为与实名上网无异。这里分享一种相对匿名且低成本的VISA虚拟卡开卡途径，只需要+1美国号码（虚拟号码&#x2F;esim均可）与随处可见的身份证号码。</p>
+<h2 id="WildCard"><a href="#WildCard" class="headerlink" title="WildCard"></a>WildCard</h2><p>WildCard作为可以直接通过支付宝充值的Mastercard虚拟卡商，相对门槛较低，可以满足一般用卡需求。代价是极高的开卡费用（11刀），受到Oracle与AWS等大牌云服务商的限制，同时只能通过内地号码注册。或许此举有着风控考量，但至少无法满足笔者的用卡需求，因此衍生出以下相对安全的替代方案。</p>
+<p><img src="https://img.floraison.io/2025_6.5_4.jpg"></p>
+<h2 id="数字交易所"><a href="#数字交易所" class="headerlink" title="数字交易所"></a>数字交易所</h2><p>加密货币领域，U指代USDT，价值与美元挂钩的稳定币。因其价格相对稳定且被广泛应用于加密货币交易，交易所在流程中承担的任务是将CNY通过C2C交易换成USDT，转移至U卡后用于消费。不幸的是，包括币安，OKX，ByBit在内的几乎所有头部交易所在入金阶段要求KYC认证。此处重点是找到具备一定规模，且对KYC认证宽松的交易平台作为中转。</p>
+<p><img src="https://img.floraison.io/2025_6.5_5.jpg"></p>
+<p>最终目标锁定在火币HTX，恶名昭著的孙割对KYC的管控意外的宽松——在其他交易所还在用前摄对韭菜们的大头用五颜六色的彩光一通羞辱时，我们伪大的孙割不仅只要求你在网上给他随便找来一串毫无价值的身份证号，还附赠你全套多米尼克数字公民身份，贡献乐子满满。到此为止便拥有了每日5BTC的提币额度，快谢谢孙割。</p>
+<h2 id="入金"><a href="#入金" class="headerlink" title="入金"></a>入金</h2><p>入金就是给孙割充钱。简单来说，是通过给火币平台的商家通过微信&#x2F;支付宝转账，由他们将现金兑换为平台账户上的余额。这里做简单演示：</p>
+<p>在快捷交易中以CNY计数下单，向币商发送相同金额的红包后通知卖家，通常交易在一分钟之内可以结束。</p>
+<p><img src="https://img.floraison.io/2025_6.5_1.jpg"></p>
+<p>现在零钱以余额的形式存在币安账户，划转到U卡之前，需要将法币账户（CNY余额）中的资产划转到现货账户（USDT）</p>
+<h2 id="开通U卡"><a href="#开通U卡" class="headerlink" title="开通U卡"></a>开通U卡</h2><p>U卡就是指可以用USDT这类稳定币进行充值，然后像普通银行卡一样在支持相应卡组织（如Visa、Mastercard）的商户进行消费的卡片。这类卡片可选很多，不乏免KYC，低开卡费，较长年限的卡商。这里使用InfiniCard做充值演示，在未进行KYC的情况下，具有500U的限额。充值U卡的过程实际上是从交易所提币。</p>
+<p><img src="https://img.floraison.io/2025_6.5_2.jpg"></p>
+<p>提币地址为U卡地址，注意网络保持一致（默认为 TRC20）</p>
+<p>至此，现金已抵至匿名VISA账户可供消费。</p>
+<p><img src="https://img.floraison.io/2025_6.5_3.jpg"></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>不幸的是，拜虫豸们一代代的不懈努力所赐，天朝匿名互联网时代早已走到尽头。所以，请让我们在肃穆中缅怀那个已经落幕的匿名互联网时代。并满怀热忱地张开双臂，迎接那个人人叼证上网，大头照飘满云端，连表情包都实名归档的和谐盛世。</p>
 
         </div>
 
@@ -294,7 +245,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://floraison.io/2025/05/16/%E5%9C%A8IPv4%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E4%B8%8BSSH%E7%99%BB%E5%BD%95IPv6%E5%8D%95%E6%A0%88VPS%E7%9A%84%E6%96%B9%E6%B3%95/">https://floraison.io/2025/05/16/%E5%9C%A8IPv4%E7%BD%91%E7%BB%9C%E7%8E%AF%E5%A2%83%E4%B8%8BSSH%E7%99%BB%E5%BD%95IPv6%E5%8D%95%E6%A0%88VPS%E7%9A%84%E6%96%B9%E6%B3%95/</a></span>
+                        <span><a href="https://floraison.io/2025/06/05/">https://floraison.io/2025/06/05/</a></span>
                     </p>
                 
                 
@@ -322,10 +273,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/05/30/%E4%BB%8E%E5%A4%8F%E6%97%A5%E5%BC%80%E5%A7%8B/">从夏日开始</a>
+                <a class="prev" rel="prev" href="/2025/07/09/">区块链上DApp社区开发实录</a>
             
             
-            <a class="next" rel="next" href="/2025/04/13/JSON%E8%A7%A3%E6%9E%90%E5%99%A8%E5%9C%A8C-17%E7%9A%84%E6%9E%81%E7%AE%80%E5%AE%9E%E7%8E%B0/">JSON解析器在C++17的极简实现</a>
+            <a class="next" rel="next" href="/2025/05/30/">从夏日开始</a>
             
         </section>
 
