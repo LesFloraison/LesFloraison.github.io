@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>关于不当配置的 Reality 节点流量异常的原因 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">关于不当配置的 Reality 节点流量异常的原因</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">August 13, 2025&nbsp;&nbsp;16:18:37</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>这篇文章将不会大量涉及 Reality 协议的原理，而是用尽可能简短的篇幅解释所谓“流量偷跑”背后的原因以及如何避免这类问题。</p>
+<h2 id="SNI-字段"><a href="#SNI-字段" class="headerlink" title="SNI 字段"></a>SNI 字段</h2><p>HTTPS 的核心是 SSL&#x2F;TLS 加密。在浏览器和服务器之间建立加密通道之前，必须先完成 TLS 握手。握手的一个关键步骤是：服务器必须向浏览器出示自己的 SSL&#x2F;TLS 证书，以证明自己是被访问的目标网站，并且链接是可信的。</p>
+<p>想象这样一个场景：一台具有 IPv4 地址的服务器之上托管着三个 HTTPS 网站，当有客浏览器发起请求时，服务器应该出示谁的证书？</p>
+<p>现在问题来了：</p>
+<ul>
+<li><p>浏览器通过IP地址，成功连接到了一台托管了<code>A.com</code>、<code>B.com</code>和<code>C.com</code>三个网站的服务器。</p>
+</li>
+<li><p>服务器收到了连接请求，但在加密开始之前，它并不知道到底是访问A、B、还是C。</p>
+</li>
+<li><p>那么，服务器应该出示哪个网站的证书？是A的，B的，还是C的？如果出示错了，浏览器就会报出严重安全警告，同时连接也会失败。</p>
+</li>
+</ul>
+<p>SNI（Server Name Indication，服务器名称指示）的诞生就是为了解决这个问题，它的工作流程如下：</p>
+<ul>
+<li><p>在正式加密之前，浏览器会先明文发送一个 ClientHello 消息，其中包含了SNI字段，明确告诉服务器：“当前要访问的是 <code>A.com</code> 这个网站”。</p>
+</li>
+<li><p>服务器看到SNI后恍然大悟，从持有的众多证书中，准确地找出<code>A.com</code>的证书，出示给浏览器。</p>
+</li>
+<li><p>浏览器验证证书无误后，双方开始协商加密密钥，建立安全的加密通道。</p>
+</li>
+</ul>
+<p>所以，SNI字段存在的意义就在于：</p>
+<blockquote>
+<p><strong>在加密通信建立之前，预先以明文告诉服务器客户端想要访问的是哪个域名，以便服务器能提供正确的SSL&#x2F;TLS证书，从而让单个IP地址能够服务于多个不同的HTTPS网站。</strong></p>
+</blockquote>
+<h2 id="“回落”（Fallback）"><a href="#“回落”（Fallback）" class="headerlink" title="“回落”（Fallback）"></a>“回落”（Fallback）</h2><p>GFW 的探测手段除了被动分析流量特征&#x2F;深度包探测外，还会主动地向境外的可疑服务器发送探测数据包，模仿特定协议的握手过程。如果服务器的响应符合某个协议的特征，GFW就会确认这是一个代理服务器，并立即封锁IP地址。</p>
+<p>如果有第三方尝试直接连接代理服务器IP，同时数据包未携带客户端密钥，则该数据包被判定为探测流量，此时会触发回落机制（Fallback）。Reality 服务器并不会暴露自己，而是会将这个连接请求直接转发到真实的目标网站。服务器在探测者面前就表现得像一个普通的反向代理服务器（即表现为对外转发），进一步增强了隐蔽性。</p>
+<blockquote>
+<p>为了伪装的效果考虑，Xray对于鉴权失败（非合法reality请求）的流量，会直接转发至 target. 如果 target 网站的 IP 地址特殊（如使用了 CloudFlare CDN 的网站） 则相当于你的服务器充当了 CloudFlare 的端口转发，可能造成被扫描后偷跑流量的情况。 为了杜绝这种情况，可以考虑前置 Nginx 等方法过滤掉不符合要求的SNI。<br>–来自官方文档</p>
+</blockquote>
+<p>由于回落机制的存在，任何来自非客户端的流量都将被导向 targetIP（协议配置中的 SNI 字段）。而所有来自非客户端的流量必定触发回落机制而被转发，一旦 targetIP 所对应的服务器受到反向代理保护，此时数据包不会直接被 targetIP 对应的服务器顺利接收，而是进入 CDN 网络等待进一步路由。</p>
+<p>由数量众多的边缘节点构成的 CDN 网络类似于一台根据 SNI 字段做转发的代理服务器。整个过程中，不知名客户端通过 Reality 服务器的回落机制进入 CDN 网络，再次由 CDN 识别其数据包中 SNI 字段，并最终转发至对应 targetIP 的真实服务器。</p>
+<p>为避免服务器在不知情的情况下成为 CDN 网络的反代，配置 Reality 时尤其注意避开隶属于 CDN 网络反向代理保护的域名作为伪装（尤其是Cloudflare，Gcore等），这类域名通常是 CDN 网络的直接入口。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2025/08/13/">https://floraison.io/2025/08/13/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2025/09/08/">浅谈 Vulkan1.4 标准与 Descriptor Buffers 扩展</a>
+            
+            
+            <a class="next" rel="next" href="/2025/07/09/">区块链上 DApp 社区开发实录</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
