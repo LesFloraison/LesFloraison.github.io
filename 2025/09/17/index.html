@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>C/C++ 程序获取硬件信息的方式 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">C/C++ 程序获取硬件信息的方式</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">September 17, 2025&nbsp;&nbsp;11:06:29</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>最近为项目编写基准性能测试，需要在日志中收集运行环境的硬件信息。这里将分别介绍在 Windows 和 Linux 环境中，如何使用 C++ 获取 CPU 型号、GPU 型号、物理内存（RAM）大小以及显存（VRAM）大小。值得注意的是，无法直接通过 C++ 标准库获取这些底层硬件信息，因此需要依赖于操作系统提供的 API 或特定的第三方库。</p>
+<h2 id="获取-CPU-信息"><a href="#获取-CPU-信息" class="headerlink" title="获取 CPU 信息"></a>获取 CPU 信息</h2><p>在 Windows 环境下，一般使用 <code>__cpuid</code> 内联函数，通过直接调用 CPU 的 <code>cpuid</code> 指令来获取信息。这种方法需要包含 <code>&lt;intrin.h&gt;</code> 头文件。这个头文件的核心功能是为开发者提供“内联函数”（Intrinsics）的访问接口。这些内联函数允许程序员在 C&#x2F;C++ 代码中直接使用特定的处理器指令，而无需编写汇编代码。编译器在编译时会将这些函数调用替换为相应的、高度优化的汇编指令。需要注意的是，<code>&lt;intrin.h&gt;</code>是由 MSVC 实现的头文件。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;array&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::array&lt;<span class="type">int</span>, 4&gt; cpuInfo;</span><br><span class="line">    <span class="type">char</span> cpuBrandString[<span class="number">0x41</span>];</span><br><span class="line">    <span class="built_in">memset</span>(cpuBrandString, <span class="number">0</span>, <span class="built_in">sizeof</span>(cpuBrandString));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i = <span class="number">0x80000002</span>; i &lt;= <span class="number">0x80000004</span>; ++i) &#123;</span><br><span class="line">        __cpuid(cpuInfo.<span class="built_in">data</span>(), i);</span><br><span class="line">        <span class="built_in">memcpy</span>(cpuBrandString + (i - <span class="number">0x80000002</span>) * <span class="number">16</span>, cpuInfo.<span class="built_in">data</span>(), <span class="number">16</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;CPU Model: &quot;</span> &lt;&lt; cpuBrandString &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在 Linux 环境中，获取 CPU 信息通常通过解析 <code>/proc/cpuinfo</code> 这个文件来实现。此文件包含了关于 CPU 的详细信息。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::ifstream <span class="title">cpuinfo</span><span class="params">(<span class="string">&quot;/proc/cpuinfo&quot;</span>)</span></span>;</span><br><span class="line">    std::string line;</span><br><span class="line">    std::string modelName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (cpuinfo.<span class="built_in">is_open</span>()) &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">getline</span>(cpuinfo, line)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (line.<span class="built_in">find</span>(<span class="string">&quot;model name&quot;</span>) != std::string::npos) &#123;</span><br><span class="line">                modelName = line.<span class="built_in">substr</span>(line.<span class="built_in">find</span>(<span class="string">&quot;:&quot;</span>) + <span class="number">2</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cpuinfo.<span class="built_in">close</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!modelName.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;CPU Model: &quot;</span> &lt;&lt; modelName &lt;&lt; std::endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Could not retrieve CPU model.&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="获取物理内存（RAM）大小"><a href="#获取物理内存（RAM）大小" class="headerlink" title="获取物理内存（RAM）大小"></a>获取物理内存（RAM）大小</h2><p>Windows API 提供了 <code>GlobalMemoryStatusEx</code> 函数，可以获取当前环境的内存状况。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MEMORYSTATUSEX statex;</span><br><span class="line">    statex.dwLength = <span class="built_in">sizeof</span>(statex);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">GlobalMemoryStatusEx</span>(&amp;statex)) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Total Physical Memory: &quot;</span></span><br><span class="line">                  &lt;&lt; statex.ullTotalPhys / (<span class="number">1024</span> * <span class="number">1024</span>)</span><br><span class="line">                  &lt;&lt; <span class="string">&quot; MB&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Failed to retrieve memory information.&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在Linux上，可以通过解析 <code>/proc/meminfo</code> 文件来获取内存大小。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::ifstream <span class="title">meminfo</span><span class="params">(<span class="string">&quot;/proc/meminfo&quot;</span>)</span></span>;</span><br><span class="line">    std::string line;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> memTotal = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (meminfo.<span class="built_in">is_open</span>()) &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">getline</span>(meminfo, line)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (line.<span class="built_in">find</span>(<span class="string">&quot;MemTotal&quot;</span>) != std::string::npos) &#123;</span><br><span class="line">                memTotal = std::<span class="built_in">stoll</span>(line.<span class="built_in">substr</span>(line.<span class="built_in">find</span>(<span class="string">&quot;:&quot;</span>) + <span class="number">1</span>));</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        meminfo.<span class="built_in">close</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (memTotal &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Total Physical Memory: &quot;</span> &lt;&lt; memTotal / <span class="number">1024</span> &lt;&lt; <span class="string">&quot; MB&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;Could not retrieve memory information.&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="获取-GPU-信息和显存容量"><a href="#获取-GPU-信息和显存容量" class="headerlink" title="获取 GPU 信息和显存容量"></a>获取 GPU 信息和显存容量</h2><p>GPU 信息的获取需要配合图形 API（OpenGL&#x2F;Vulkan）。应用程序需要初始化相应的图形 API 才能查询到这些信息。</p>
+<p>使用 OpenGL 获取 GPU 型号相对直接，但获取显存容量则依赖于厂商的特定扩展。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;GL/glew.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;GLFW/glfw3.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">glfwInit</span>()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    GLFWwindow* window = <span class="built_in">glfwCreateWindow</span>(<span class="number">640</span>, <span class="number">480</span>, <span class="string">&quot;Hardware Info&quot;</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (!window) &#123;</span><br><span class="line">        <span class="built_in">glfwTerminate</span>();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">glfwMakeContextCurrent</span>(window);</span><br><span class="line">    <span class="built_in">glewInit</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">const</span> GLubyte* renderer = <span class="built_in">glGetString</span>(GL_RENDERER);</span><br><span class="line">    <span class="type">const</span> GLubyte* vendor = <span class="built_in">glGetString</span>(GL_VENDOR);</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;GPU Vendor: &quot;</span> &lt;&lt; vendor &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;GPU Model: &quot;</span> &lt;&lt; renderer &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取显存大小需要使用扩展</span></span><br><span class="line">    <span class="comment">// NVIDIA: GL_NVX_gpu_memory_info</span></span><br><span class="line">    <span class="comment">// AMD: GL_ATI_meminfo</span></span><br><span class="line">    GLint total_mem_kb = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">glewIsSupported</span>(<span class="string">&quot;GL_NVX_gpu_memory_info&quot;</span>)) &#123;</span><br><span class="line">        <span class="built_in">glGetIntegerv</span>(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &amp;total_mem_kb);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">glewIsSupported</span>(<span class="string">&quot;GL_ATI_meminfo&quot;</span>)) &#123;</span><br><span class="line">        <span class="comment">// AMD扩展返回的是一个包含四个值的数组</span></span><br><span class="line">        <span class="comment">// total, total-free, aux, aux-free in KB</span></span><br><span class="line">        GLint mem_info[<span class="number">4</span>];</span><br><span class="line">        <span class="built_in">glGetIntegerv</span>(GL_TEXTURE_FREE_MEMORY_ATI, mem_info);</span><br><span class="line">        total_mem_kb = mem_info[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (total_mem_kb &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;VRAM Size: &quot;</span> &lt;&lt; total_mem_kb / <span class="number">1024</span> &lt;&lt; <span class="string">&quot; MB&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;VRAM size could not be determined via standard OpenGL extensions.&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="built_in">glfwDestroyWindow</span>(window);</span><br><span class="line">    <span class="built_in">glfwTerminate</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Vulkan 提供了详细的物理设备属性查询功能且为核心特性，因此平台无关。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;vulkan/vulkan.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    VkInstance instance;</span><br><span class="line">    <span class="comment">// ... 创建Vulkan实例 ...</span></span><br><span class="line"></span><br><span class="line">    <span class="type">uint32_t</span> deviceCount = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">vkEnumeratePhysicalDevices</span>(instance, &amp;deviceCount, <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="function">std::vector&lt;VkPhysicalDevice&gt; <span class="title">devices</span><span class="params">(deviceCount)</span></span>;</span><br><span class="line">    <span class="built_in">vkEnumeratePhysicalDevices</span>(instance, &amp;deviceCount, devices.<span class="built_in">data</span>());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (deviceCount &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        VkPhysicalDeviceProperties deviceProperties;</span><br><span class="line">        <span class="built_in">vkGetPhysicalDeviceProperties</span>(devices[<span class="number">0</span>], &amp;deviceProperties);</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;GPU: &quot;</span> &lt;&lt; deviceProperties.deviceName &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">        VkPhysicalDeviceMemoryProperties memProperties;</span><br><span class="line">        <span class="built_in">vkGetPhysicalDeviceMemoryProperties</span>(devices[<span class="number">0</span>], &amp;memProperties);</span><br><span class="line"></span><br><span class="line">        VkDeviceSize vramSize = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">uint32_t</span> i = <span class="number">0</span>; i &lt; memProperties.memoryHeapCount; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (memProperties.memoryHeaps[i].flags &amp; VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) &#123;</span><br><span class="line">                vramSize += memProperties.memoryHeaps[i].size;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;VRAM Size: &quot;</span> &lt;&lt; vramSize / (<span class="number">1024</span> * <span class="number">1024</span>) &lt;&lt; <span class="string">&quot; MB&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 清理Vulkan资源 ...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2025/09/17/">https://floraison.io/2025/09/17/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/09/08/">浅谈 Vulkan1.4 标准与 Descriptor Buffers 扩展</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
