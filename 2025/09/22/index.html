@@ -214,7 +214,7 @@
 <li><p>将子域名 <code>mysite.com</code> 指向另一个服务，比如 Microsoft 的服务器 (CNAME 记录)。</p>
 </li>
 </ul>
-<p>相应的，不能将 <code>mysite.com/zh-cn</code> 这个路径指向任何地方。DNS 根本不理解 URL 中域名后面的路径部分，因此无法实现路径级别的统一：这是最关键的一点。如果希望实现 <code>mysite.com/surface</code> 指向 <code>microsoft.com/surface</code>，<code>mysite.com/windows</code> 指向 <code>mysite.com/windows</code>，DNS 完全无能为力。同时 URL 地址栏会变化：使用子域名方式后，用户访问博客时，地址栏显示的是 <code>microsoft.com/windows</code>，而不是 <code>mysite.com/windows</code>。</p>
+<p>相应的，不能将 <code>mysite.com/zh-cn</code> 这个路径指向任何地方。DNS 根本不理解 URL 中域名后面的路径部分，因此无法实现路径级别的统一：这是最关键的一点。如果希望实现 <code>mysite.com/surface</code> 指向 <code>microsoft.com/surface</code>，<code>mysite.com/windows</code> 指向 <code>mysite.com/windows</code>，DNS 完全无能为力。同时 URL 地址栏会变化：使用子域名方式后，用户访问时，地址栏显示的是 <code>microsoft.com/windows</code>，而不是 <code>mysite.com/windows</code>。</p>
 <h2 id="引入反向代理"><a href="#引入反向代理" class="headerlink" title="引入反向代理"></a>引入反向代理</h2><p>反向代理最为熟知的应用是隔离防护，由于客户端直接访问的是反向代理服务器的IP地址，后端真实服务器的IP地址和网络拓扑结构对外界是不可见的。这大大增加了攻击者直接攻击后端服务器的难度。</p>
 <p>然而反代恰好工作在应用层，它可以读取和理解完整的 URL，包括路径（<code>/windows</code>）、请求头等所有信息，是一个真正的服务器程序。所以可以接收所有发往 <code>mysite.com</code> 的请求，然后，检查请求的具体 URL，再决定把这个请求转发给哪个后台服务。</p>
 <p>我们可以依靠这一点，真正实现路径级别的统一：这是反向代理的核心优势。它可以检查到用户访问的是 <code>mysite.com/windows</code>，然后默默地去请求 <code>microsoft.com/windows</code> 的内容，再把内容拿回来，呈现给用户。整个过程对用户透明，因此无论后台内容来自哪个服务，浏览器地址栏始终是 <code>mysite.com</code> 开头的地址。</p>
