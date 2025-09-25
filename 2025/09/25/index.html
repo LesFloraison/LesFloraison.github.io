@@ -13,7 +13,7 @@
 
 
 
-<title>反向代理实现优雅的重定向 | Floraison</title>
+<title>笨蛋 TV 之 IPv4 暴露公网 | Floraison</title>
 
 
 
@@ -188,7 +188,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">反向代理实现优雅的重定向</h1>
+            <h1 class="post-title">笨蛋 TV 之 IPv4 暴露公网</h1>
             
                 <div class="post-meta">
                     
@@ -197,7 +197,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">September 22, 2025&nbsp;&nbsp;23:21:00</a>
+                        Date: <a href="#">September 25, 2025&nbsp;&nbsp;16:45:59</a>
                         </span>
                     
                     
@@ -206,24 +206,37 @@
         </header>
 
         <div class="post-content">
-            <p>首先抛出问题：如何通过自己的域名，访问其他网站？或者想象一个更具体的例子，笔者该如何实现通过 <code>mysite.com</code> 这个域名，在浏览器中访问微软官网？你的第一个想法大概率会是在 DNS 中添加一条 CNAME 记录，将 <code>mysite.com</code> 解析到 <code>microsoft.com</code>。然而问题却并没有表面这样简单。</p>
-<h2 id="DNS-的局限"><a href="#DNS-的局限" class="headerlink" title="DNS 的局限"></a>DNS 的局限</h2><p>DNS 的作用是域名到 IP 地址的翻译。它告诉浏览器某个域名（或子域名）对应的服务器在哪里。由于 DNS 工作在域名层，你可以：</p>
-<ul>
-<li><p>将 <code>mysite.com</code> 指向一个 IP 地址 (A 记录)。</p>
-</li>
-<li><p>将子域名 <code>mysite.com</code> 指向另一个服务，比如 Microsoft 的服务器 (CNAME 记录)。</p>
-</li>
-</ul>
-<p>相应的，不能将 <code>mysite.com/zh-cn</code> 这个路径指向任何地方。DNS 根本不理解 URL 中域名后面的路径部分，因此无法实现路径级别的统一：这是最关键的一点。如果希望实现 <code>mysite.com/surface</code> 指向 <code>microsoft.com/surface</code>，<code>mysite.com/windows</code> 指向 <code>mysite.com/windows</code>，DNS 完全无能为力。同时 URL 地址栏会变化：使用子域名方式后，用户访问时，地址栏显示的是 <code>microsoft.com/windows</code>，而不是 <code>mysite.com/windows</code>。</p>
-<h2 id="引入反向代理"><a href="#引入反向代理" class="headerlink" title="引入反向代理"></a>引入反向代理</h2><p>反向代理最为熟知的应用是隔离防护，由于客户端直接访问的是反向代理服务器的IP地址，后端真实服务器的IP地址和网络拓扑结构对外界是不可见的。这大大增加了攻击者直接攻击后端服务器的难度。</p>
-<p>然而反代恰好工作在应用层，它可以读取和理解完整的 URL，包括路径（<code>/windows</code>）、请求头等所有信息，是一个真正的服务器程序。所以可以接收所有发往 <code>mysite.com</code> 的请求，然后，检查请求的具体 URL，再决定把这个请求转发给哪个后台服务。</p>
-<p>我们可以依靠这一点，真正实现路径级别的统一：这是反向代理的核心优势。它可以检查到用户访问的是 <code>mysite.com/windows</code>，然后默默地去请求 <code>microsoft.com/windows</code> 的内容，再把内容拿回来，呈现给用户。整个过程对用户透明，因此无论后台内容来自哪个服务，浏览器地址栏始终是 <code>mysite.com</code> 开头的地址。</p>
-<h2 id="Cloudflare-Workers"><a href="#Cloudflare-Workers" class="headerlink" title="Cloudflare Workers"></a>Cloudflare Workers</h2><p>我并不希望分配出自己的 VPS 专门为反代的目的配置 nginx，而 CF Workers 这样的无服务器计算产品再适合不过了。事实上，“无服务器”这个名字其实有点误导，它不是指真的没有服务器，而是指作为开发者，我不再需要关心和管理服务器，也不再需要配置环境，监控机器运行状态。与此同时，我也毫不在意这段 JS 代码最后落在 Cloudflare 的哪个边缘节点上执行。</p>
-<p>这里提供一个运行在 Workers 上的经典反向代理脚本：<a target="_blank" rel="noopener" href="https://github.com/jonssonyan/cf-workers-proxy">仓库地址</a></p>
-<p>复制 workers.js 中源代码到 Workers 项目中部署后，还需为其配置所代理的域名：在设置中找到变量和机密，添加名为 <code>PROXY_HOSTNAME</code> 的变量，值为所代理网站的域名。同时自定义域需要填写自己托管在 CF 之上的域名。</p>
-<p><img src="https://img.floraison.io/2025_9_22.png"></p>
-<p>至此，已经 <code>microsoft.com</code> 下的所有页面已经被反代至 <code>mysite.com</code>，而中间的所有代理转发，在用户侧看起来是完全无感的。</p>
-<p>（仅作示范，千万别去反代微软，容易封号）</p>
+            <p>很久以前，窝还是一只小孩纸的时候，妈妈捧着童话书（《计算机网络第8版》谢希仁&#x2F;电子工业出版社），在枕边讲起昏昏欲睡的童话故事。</p>
+<p>“有一颗神奇的奶油星球，听说那里的公网 IPv4 地址只有37亿个，已经不够分了呢。”</p>
+<p>“好可怜欸！::&gt;_&lt;:: 那…一定会有超级多的 NAT 吧，除了偶尔需要打个洞洞，钻钻隧道，或许也还蛮幸福吧？”</p>
+<p>“可怕的大灰狼会每天抱着破笔记本，挨家挨户扫描全网地址，挨个记录在本本上！如果有笨蛋开放了22端口，还会被敲一整天的门。”</p>
+<p>每当这时，窝都会被吓得抱紧枕头，钻进小被几包裹住脑袋，哭着打断妈妈不要再讲下去了。妈妈也只好无奈地把童话书（《计算机网络第8版》谢希仁&#x2F;电子工业出版社）放回枕边，温柔地抚摸着我的发丝，轻声安慰到：</p>
+<p>“乖~ 不哭啦，咱以后只开 v6 单栈机器，大灰狼一辈子也找不到咱的ww”</p>
+<h2 id="笨蛋们……大灰狼来啦！"><a href="#笨蛋们……大灰狼来啦！" class="headerlink" title="笨蛋们……大灰狼来啦！"></a>笨蛋们……大灰狼来啦！</h2><p>长大之后，我变成了童话故事里的大坏蛋，整天扫别人 IP 玩。其实并不需要自己动手，现成的网络空间测绘已经帮你扫完了。</p>
+<p>比如这里刚好有个 <a href="fofa.info">fofa.info</a>：</p>
+<p>fofa 的优势在于无需手机号注册（+86暴露的后果自不必多说），临时邮箱或诸如 Proton 之流均可以随意注册。趁着能用的时候多玩一会吧，这里给出三个有趣的玩法哦(｡ゝω•｡)☆</p>
+<p><img src="https://img.floraison.io/2025_9_25_2.png"></p>
+<h2 id="Ollama-借用一下！"><a href="#Ollama-借用一下！" class="headerlink" title="Ollama 借用一下！"></a>Ollama 借用一下！</h2><p>Ollama 是一个本地运行大语言模型（LLM）的工具&#x2F;平台。像用 Docker 一样方便地在自己电脑上拉取、管理和运行各种开源大模型（例如 LLaMA、Mistral、Gemma、CodeLlama 等），而不用自己去处理复杂的安装和依赖问题。</p>
+<p>上面这段是抄来的… 你也看到了，这是一个本地运行 LLM 的平台，但是有些糊涂蛋非要把运行 Ollama 服务的机器暴露在公网上。然而，Ollama 并没有完善的鉴权方案，甚至不屑于用 Nginx 反代一小下，就酱水灵灵的开放在了 11434 默认端口。那咱可就不客气啦！</p>
+<p>fofa 的查询语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app=&quot;Ollama&quot; &amp;&amp; server!=&quot;nginx&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.floraison.io/2025_9_25_1.png"></p>
+<p>这里需要使用随便一个 API 调试工具向服务器发送一段 POST 请求，格式如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;model&quot;</span><span class="punctuation">:</span> <span class="string">&quot;deepseek-r1:70b&quot;</span><span class="punctuation">,</span><span class="attr">&quot;prompt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Why sky is blue?&quot;</span><span class="punctuation">,</span><span class="attr">&quot;stream&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就会收到服务端傻傻的回答啦，像介样子</p>
+<p><img src="https://img.floraison.io/2025.9.25.png"></p>
+<h2 id="加入别人的游戏世界，你系哪位？∑-￣□￣"><a href="#加入别人的游戏世界，你系哪位？∑-￣□￣" class="headerlink" title="加入别人的游戏世界，你系哪位？∑(￣□￣;)"></a>加入别人的游戏世界，你系哪位？∑(￣□￣;)</h2><p>Minecraft 游戏服务器默认开放在 25565 端口上。虽然绝大多数腐竹会为自己的小窝添加白名单插件，但这不还是有人没想起来么。多找几段 IP 总是能进去的啦，期待你也会有一段不期而遇的游戏经历哦！（绝大多数情况是被直接撵出去QAQ）</p>
+<p>fofa的查询语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protocol=&quot;minecraft&quot; &amp;&amp; &quot;Version: 1.21.8&quot; &amp;&amp; country=&quot;CN&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img.floraison.io/2025_09_25_3.png"></p>
+<h2 id="反代-Cloudflare-的第三方-IP"><a href="#反代-Cloudflare-的第三方-IP" class="headerlink" title="反代 Cloudflare 的第三方 IP"></a>反代 Cloudflare 的第三方 IP</h2><p>这部分也被某些博主也称作“优选 IP”。有些奇怪的服务器会把收到的数据包原封不动地转发到 Cloudflare 网络，虽然看不懂这是什么奇怪的行为（或许是某些业务所迫）(还有一种可能是架设了 dest 为 CF 保护域名的 Reality 节点)，但还是可以为我们所用。毕竟大多数人与 CF 网络的延迟主要存在于终端与 CF 入口这段区间，如果有位置合适的转发机将大大降低和 CF 网络的通讯延迟。假设我们查找将地区限定为日本、头部特征隐藏、排除 CF 的 AS 号，反向代理Cloudflare的IP。</p>
+<p>fofa的查询语法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">server==&quot;cloudflare&quot; &amp;&amp; port==&quot;443&quot; &amp;&amp; header=&quot;Forbidden&quot; </span><br><span class="line">&amp;&amp; region==&quot;HK&quot; &amp;&amp; asn!=&quot;13335&quot; &amp;&amp; asn!=&quot;209242&quot; </span><br><span class="line">&amp;&amp; asn!=&quot;396982&quot; &amp;&amp; asn!=&quot;132892&quot; &amp;&amp; asn!=&quot;202623&quot;</span><br></pre></td></tr></table></figure>
+
+<p>之后将筛选出的 IP 地址填入代理客户端，节点的 SNI 字段，测速即可。</p>
 
         </div>
 
@@ -238,7 +251,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://floraison.io/2025/09/22/">https://floraison.io/2025/09/22/</a></span>
+                        <span><a href="https://floraison.io/2025/09/25/">https://floraison.io/2025/09/25/</a></span>
                     </p>
                 
                 
@@ -266,10 +279,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/09/25/">笨蛋 TV 之 IPv4 暴露公网</a>
             
-            
-            <a class="next" rel="next" href="/2025/09/17/">C/C++ 程序获取硬件信息的方式</a>
+            <a class="next" rel="next" href="/2025/09/22/">反向代理实现优雅的重定向</a>
             
         </section>
 
