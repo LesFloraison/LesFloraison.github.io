@@ -215,7 +215,7 @@
 <p>这里略过刷机过程，简单展示如何部署软件包。游戏的 XAP 包可以在 Internet Archive 找到：<a target="_blank" rel="noopener" href="https://archive.org/download/mirrors-edge-mobile-and-flash/Windows%20Phone/">mirrors-edge-mobile-and-flash directory listing</a></p>
 <p>安装 Visual Studio Community 2015，仅勾选通用Windows应用开发工具、Windows 8.1 和 Windows Phone 8.0&#x2F;8.1 工具，安装需 11GB 左右电脑存储空间。之后在<code>C:\Program Files (x86)\Microsoft SDKs\Windows Phone\v8.0\Tools\XAP Deployment</code> 目录下找到部署工具，保持手机全程亮屏。注意：如果 Status 报错<code>0x89740005</code> 代表设备没有解锁，自己想办法去吧，笨~</p>
 <p><img src="https://img.floraison.io/2025-10-5_2.png"></p>
-<h2 id="XAP-笑传之拆拆包"><a href="#XAP-笑传之拆拆包" class="headerlink" title="XAP 笑传之拆拆包"></a>XAP 笑传之拆拆包</h2><p>对不起，窝在标题上玩了烂梗，道歉！红豆泥私密马赛 ::&gt;_&lt;:: 不过呢，其实 WindowsPhone 平台的软件包有两种：WP7&#x2F;8&#x2F;8.1 时代流行的 <code>.xpa</code> 后缀包体，与 WP8.1 新引入的 <code>.appx</code> 安装包，后者多用于后续 UWP 应用打包。有趣的是，这两种包体结构都没有加密设计，简单的更改后缀名为 <code>zip</code> 即可解包。（记得15年左右，国内某个不知名小团体宣称全球首破 appx… 现在想起来还是超级想笑来着）</p>
+<h2 id="XAP-笑传之拆拆包"><a href="#XAP-笑传之拆拆包" class="headerlink" title="XAP 笑传之拆拆包"></a>XAP 笑传之拆拆包</h2><p>对不起，窝在标题上玩了烂梗，道歉！红豆泥私密马赛 ::&gt;_&lt;:: 不过呢，其实 WindowsPhone 平台的软件包有两种：WP7&#x2F;8&#x2F;8.1 时代流行的 <code>.xap</code> 后缀包体，与 WP8.1 新引入的 <code>.appx</code> 安装包，后者多用于后续 UWP 应用打包。有趣的是，这两种包体结构都没有加密设计，简单的更改后缀名为 <code>zip</code> 即可解包。（记得15年左右，国内某个不知名小团体宣称全球首破 appx… 现在想起来还是超级想笑来着）</p>
 <p>咱们拆开看看吧！emm…满眼的<code>xnb</code>文件，可以确定的 WindowsPhone 版的游戏是由 XNA 框架开发的。不了解的话，XNA 在我看来是对 DirectX 的一层封装，偏底层的的 API。已知 WP 版本是 IOS 的移植，且12年附近 XNA 还没有运行在 IOS 上的能力，看来与其说是移植，更偏向是整个重写了一遍叭…</p>
 <p><img src="https://img.floraison.io/2025-10-05_6.png"></p>
 <p>这里提供<code>xnb</code>的解包工具：<a target="_blank" rel="noopener" href="https://github.com/LeonBlade/xnbcli/releases">Releases · LeonBlade&#x2F;xnbcli</a> 此工具只具备纹理与 JSON 格式的拆解能力。</p>
@@ -223,7 +223,7 @@
 <p><img src="https://img.floraison.io/2025-10-05_4.png"></p>
 <p>通过成就解锁的奖励原画以 800x480 分辨率呈现，并无新增内容。</p>
 <p><img src="https://img.floraison.io/2025-10-05_5.png"></p>
-<h2 id="等等…别走！"><a href="#等等…别走！" class="headerlink" title="等等…别走！"></a>等等…别走！</h2><p>如你所见，这只是 Part1 的部分啦（好像被窝写成 WP 的扫盲文惹，抱一丝！）咱还在认真准备 Part2 的内容ing，大概是一些 Mirror‘s Edge 在其他平台的秘密啦！请你看下去呜呜w</p>
+<h2 id="等等…别走！"><a href="#等等…别走！" class="headerlink" title="等等…别走！"></a>等等…别走！</h2><p>如你所见，这只是 Part1 的部分啦（好像被窝写成 WP 的扫盲文惹，抱一丝！）咱还在认真准备 Part2 的内容ing，大概是一些 Mirror’s Edge 在其他平台的秘密啦！请你看下去呜呜w</p>
 
         </div>
 
