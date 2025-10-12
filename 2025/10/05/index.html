@@ -206,10 +206,10 @@
         </header>
 
         <div class="post-content">
-            <p>这里向泥介绍 Mirror’s Edge 的移动版！</p>
-<h2 id="前置条件-准备"><a href="#前置条件-准备" class="headerlink" title="前置条件 &amp; 准备"></a>前置条件 &amp; 准备</h2><p>Mirror’s Edge 的移动版本只曾在 IOS 与 WindowsPhone 平台发行，IOS7 及之后的系统因无法存档而下架。笔者的抽屉里刚好留存着三台 WP 设备吃灰，这里稍微对于这个微软曾经的移动平台做些前置知识补充（谁让我是微软nc粉呢，摊手ing）</p>
+            <p>这里向泥介绍 Mirror’s Edge 不为人知的移动版！</p>
+<h2 id="前置条件-准备"><a href="#前置条件-准备" class="headerlink" title="前置条件 &amp; 准备"></a>前置条件 &amp; 准备</h2><p>Mirror’s Edge 的移动版本只曾在 IOS 与 WindowsPhone 平台发行，而在 IOS7 及之后的系统版本因无法存档而下架，所以现如今重新体验的最佳途径自然是去抓来一只微软爪机啦！笔者的抽屉里刚好留存着三台 WP 设备吃灰，这里稍微对于这个微软曾经的移动平台做些前置知识补充（谁让窝是微软nc粉呢，摊手ing）</p>
 <p><img src="https://img.floraison.io/2025-10-5_7.jpg"></p>
-<p>作为多年前早已停止维护的系统，WP 应用商店早已结束服务，无法重新下载任何已购应用（退钱！！）。而侧载则依靠微软在 WP8 SDK 中提供的 XAP 程序包部署器，这本是向曾经的开发者提供的真机部署手段，用于在开发阶段进行调试。在部署之前的前置条件是为手机进行开发者解锁，需要注册成为开发者账号且每半年续费一次且费用不菲（印象中，笔者是在淘宝代注册学生账号，相较于完整开发者账号的解锁，单机 XAP 包同时部署数量限制由10个锐减3个，经济所限…）</p>
+<p>作为多年前早已停止维护的系统，WP 应用商店早已结束服务，无法重新下载任何已购应用（退钱！！）<br>而侧载 APP 则依靠微软在 WP8 SDK 中提供的 XAP 程序包部署器，这本是向曾经的开发者提供的真机部署手段，用于在开发阶段进行调试。在部署之前的前置条件是为手机进行开发者解锁，需要注册成为开发者账号且每半年续费一次且费用不菲（印象中，笔者曾经是在淘宝代注册学生账号，相较于完整开发者账号的解锁，单台设备的程序包同时部署数量限制由10个锐减3个，经济所限…）</p>
 <p><img src="https://img.floraison.io/2025-10-5.jpg"></p>
 <p>2025年，开发者解锁的渠道早已废弃，无法部署软件包使得绝大多数 WP 设备沦为电子垃圾。幸运的是，笔者其中一台 WP 设备并非出自微软&#x2F;Nokia，而是华为在早期与微软合作的 Ascend W1（闺蜜甚至惊叹于华为还搞过这东西）。由于并非出自微软之手，安全性远不及 Lumia 系列，针对于 W1 的第三方修改 ROM 被早早放出，使得这台设备可以轻易进行开发者解锁，着实帮了大忙。</p>
 <p>这里略过刷机过程，简单展示如何部署软件包。游戏的 XAP 包可以在 Internet Archive 找到：<a target="_blank" rel="noopener" href="https://archive.org/download/mirrors-edge-mobile-and-flash/Windows%20Phone/">mirrors-edge-mobile-and-flash directory listing</a></p>
@@ -219,9 +219,9 @@
 <p>咱们拆开看看吧！emm…满眼的<code>xnb</code>文件，可以确定的 WindowsPhone 版的游戏是由 XNA 框架开发的。不了解的话，XNA 在我看来是对 DirectX 的一层封装，偏底层的的 API。已知 WP 版本是 IOS 的移植，且12年附近 XNA 还没有运行在 IOS 上的能力，看来与其说是移植，更偏向是整个重写了一遍叭…</p>
 <p><img src="https://img.floraison.io/2025-10-05_6.png"></p>
 <p>这里提供<code>xnb</code>的解包工具：<a target="_blank" rel="noopener" href="https://github.com/LeonBlade/xnbcli/releases">Releases · LeonBlade&#x2F;xnbcli</a> 此工具只具备纹理与 JSON 格式的拆解能力。</p>
-<p>一个有趣的细节是，游戏为身处不同章节，不同光照环境下的主角 Faith 准备了不同的皮肤纹理：下图分别是在正午，午夜，地下的纹理，由于图形 API 在纹理采样时的坐标系原点位于屏幕左下，因此绝大多数纹理都是垂直反向的。</p>
+<p>一个有趣的细节是，游戏为身处不同章节，不同光照环境下的主角 Faith 准备了不同的皮肤纹理：下图分别是在正午，午夜，地下的纹理。由于图形 API 在纹理采样时的坐标系原点位于屏幕左上，因此绝大多数纹理都是垂直反向的。</p>
 <p><img src="https://img.floraison.io/2025-10-05_4.png"></p>
-<p>通过成就解锁的奖励原画以 800x480 分辨率呈现，并无新增内容。</p>
+<p>通过成就解锁的奖励原画以 800x480 分辨率呈现，并无新增内容，还请在官方设定集中寻找完整的原画与高清艺术图吧。</p>
 <p><img src="https://img.floraison.io/2025-10-05_5.png"></p>
 <h2 id="等等…别走！"><a href="#等等…别走！" class="headerlink" title="等等…别走！"></a>等等…别走！</h2><p>如你所见，这只是 Part1 的部分啦（好像被窝写成 WP 的扫盲文惹，抱一丝！）咱还在认真准备 Part2 的内容ing，大概是一些 Mirror’s Edge 在其他平台的秘密啦！请你看下去呜呜w</p>
 
