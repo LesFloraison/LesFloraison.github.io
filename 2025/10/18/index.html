@@ -13,7 +13,7 @@
 
 
 
-<title>Mirror&#39;s Edge 所不为人知的碎片 Part.1 | Floraison</title>
+<title>图形程序的截帧调试指南 | Floraison</title>
 
 
 
@@ -188,7 +188,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Mirror&#39;s Edge 所不为人知的碎片 Part.1</h1>
+            <h1 class="post-title">图形程序的截帧调试指南</h1>
             
                 <div class="post-meta">
                     
@@ -197,7 +197,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 5, 2025&nbsp;&nbsp;18:58:51</a>
+                        Date: <a href="#">October 18, 2025&nbsp;&nbsp;14:38:02</a>
                         </span>
                     
                     
@@ -206,24 +206,22 @@
         </header>
 
         <div class="post-content">
-            <p>这里向泥介绍 Mirror’s Edge 不为人知的移动版！</p>
-<h2 id="前置条件-准备"><a href="#前置条件-准备" class="headerlink" title="前置条件 &amp; 准备"></a>前置条件 &amp; 准备</h2><p>Mirror’s Edge 的移动版本只曾在 IOS 与 WindowsPhone 平台发行，而在 IOS7 及之后的系统版本因无法存档而下架，所以现如今重新体验的最佳途径自然是去抓来一只微软爪机啦！笔者的抽屉里刚好留存着三台 WP 设备吃灰，这里稍微对于这个微软曾经的移动平台做些前置知识补充（谁让窝是微软nc粉呢，摊手ing）</p>
-<p><img src="https://img.floraison.io/2025-10-5_7.jpg"></p>
-<p>作为多年前早已停止维护的系统，WP 应用商店早已结束服务，无法重新下载任何已购应用（退钱！！）<br>而侧载 APP 则依靠微软在 WP8 SDK 中提供的 XAP 程序包部署器，这本是向曾经的开发者提供的真机部署手段，用于在开发阶段进行调试。在部署之前的前置条件是为手机进行开发者解锁，需要注册成为开发者账号且每半年续费一次且费用不菲（印象中，笔者曾经是在淘宝代注册学生账号，相较于完整开发者账号的解锁，单台设备的程序包同时部署数量限制由10个锐减3个，经济所限…）</p>
-<p><img src="https://img.floraison.io/2025-10-5.jpg"></p>
-<p>2025年，开发者解锁的渠道早已废弃，无法部署软件包使得绝大多数 WP 设备沦为电子垃圾。幸运的是，笔者其中一台 WP 设备并非出自微软&#x2F;Nokia，而是华为在早期与微软合作的 Ascend W1（闺蜜甚至惊叹于华为还搞过这东西）。由于并非出自微软之手，安全性远不及 Lumia 系列，针对于 W1 的第三方修改 ROM 被早早放出，使得这台设备可以轻易进行开发者解锁，着实帮了大忙。</p>
-<p>这里略过刷机过程，简单展示如何部署软件包。游戏的 XAP 包可以在 Internet Archive 找到：<a target="_blank" rel="noopener" href="https://archive.org/download/mirrors-edge-mobile-and-flash/Windows%20Phone/">mirrors-edge-mobile-and-flash directory listing</a></p>
-<p>安装 Visual Studio Community 2015，仅勾选通用Windows应用开发工具、Windows 8.1 和 Windows Phone 8.0&#x2F;8.1 工具，安装需 11GB 左右电脑存储空间。之后在<code>C:\Program Files (x86)\Microsoft SDKs\Windows Phone\v8.0\Tools\XAP Deployment</code> 目录下找到部署工具，保持手机全程亮屏。注意：如果 Status 报错<code>0x89740005</code> 代表设备没有解锁，自己想办法去吧，笨~</p>
-<p><img src="https://img.floraison.io/2025-10-5_2.png"></p>
-<h2 id="XAP-笑传之拆拆包"><a href="#XAP-笑传之拆拆包" class="headerlink" title="XAP 笑传之拆拆包"></a>XAP 笑传之拆拆包</h2><p>对不起，窝在标题上玩了烂梗，道歉！红豆泥私密马赛 ::&gt;_&lt;:: 不过呢，其实 WindowsPhone 平台的软件包有两种：WP7&#x2F;8&#x2F;8.1 时代流行的 <code>.xap</code> 后缀包体，与 WP8.1 新引入的 <code>.appx</code> 安装包，后者多用于后续 UWP 应用打包。有趣的是，这两种包体结构都没有加密设计，简单的更改后缀名为 <code>zip</code> 即可解包。（记得15年左右，国内某个不知名小团体宣称全球首破 appx… 现在想起来还是超级想笑来着）</p>
-<p>咱们拆开看看吧！emm…满眼的<code>xnb</code>文件，可以确定的 WindowsPhone 版的游戏是由 XNA 框架开发的。不了解的话，XNA 在我看来是对 DirectX 的一层封装，偏底层的的 API。已知 WP 版本是 IOS 的移植，且12年附近 XNA 还没有运行在 IOS 上的能力，看来与其说是移植，更偏向是整个重写了一遍叭…</p>
-<p><img src="https://img.floraison.io/2025-10-05_6.png"></p>
-<p>这里提供<code>xnb</code>的解包工具：<a target="_blank" rel="noopener" href="https://github.com/LeonBlade/xnbcli/releases">Releases · LeonBlade&#x2F;xnbcli</a> 此工具只具备纹理与 JSON 格式的拆解能力。</p>
-<p>一个有趣的细节是，游戏为身处不同章节，不同光照环境下的主角 Faith 准备了不同的皮肤纹理：下图分别是在正午，午夜，地下的纹理。由于图形 API 在纹理采样时的坐标系原点位于屏幕左上，因此绝大多数纹理都是垂直反向的。</p>
-<p><img src="https://img.floraison.io/2025-10-05_4.png"></p>
-<p>通过成就解锁的奖励原画以 800x480 分辨率呈现，并无新增内容，还请在官方设定集中寻找完整的原画与高清艺术图吧。</p>
-<p><img src="https://img.floraison.io/2025-10-05_5.png"></p>
-<h2 id="等等…别走！"><a href="#等等…别走！" class="headerlink" title="等等…别走！"></a>等等…别走！</h2><p>如你所见，这只是 Part1 的部分啦（好像被窝写成 WP 的扫盲文惹，抱一丝！）咱还在认真准备 Part2 的内容ing，大概是一些 Mirror’s Edge 在其他平台的秘密啦！请你看下去呜呜w</p>
+            <p>想象你花了半天时间编写了图形程序，一切都是那样的完美，直到…你按下 F5 打算调试一下，于是噩梦就降临了。黑漆漆一块大屏乎在脸上，啥都木有。</p>
+<p>你开始怀疑某个 shader 出了错，可人家正经过了编译。或者是某处 API 没用对？验证层又告诉你没问题。那总不能是 Feature 支持没跟上吧？于是你又写了一堆 <code>vkGetPhysicalDeviceFeatures()</code>，最后发现自己还是小瞧这张破卡了。</p>
+<p>以上都是图形开发的日常惹…先不要着急拍烂大腿。就好像 C&#x2F;C++ 可以随时在调试时打个断点，看看堆栈里究竟填了什么，图形开发自然也会有类似的调试操作。</p>
+<h2 id="使用-Nvidia-NSight-截帧"><a href="#使用-Nvidia-NSight-截帧" class="headerlink" title="使用 Nvidia NSight 截帧"></a>使用 Nvidia NSight 截帧</h2><p>截帧指的是捕获 GPU 渲染的整个指令序列和资源状态，用于离线分析。截帧工具会在程序运行时抓取某一帧的所有 GPU 状态和调用，然后你可以逐步查看每个渲染通道、每个 Shader 的结果。这里使用 NSight 以作示范，相较于 Intel GPA，RDC 等，NSight 是我所使用过最为直观的截帧工具：绑定图形程序所在的进程之后，按下 F11 便可以直接开始分析。</p>
+<p><img src="https://img.floraison.io/2025-10-18_3.png"></p>
+<p>虽然 NSight 有直接依附进 IDE，比如 VisualStudio 的能力，不过还是建议直接绑定目标图形程序（项目 Debug 目录下的 .exe 文件），在欢迎页选择 Start Activity，选择图形程序的位置后就可以启动调试器。</p>
+<h2 id="案例1：错误调试"><a href="#案例1：错误调试" class="headerlink" title="案例1：错误调试"></a>案例1：错误调试</h2><p>正如在引文部分的，大多数不能被编译器和验证层捕获到的错误，几乎都是对图形 API 调用的逻辑上的一时疏忽造成的。比如资源没有传递到对应 shader，又或者是忘记清空上一帧的深度缓冲，这类逻辑错误实在是难以排查，需要截帧分析具体是哪趟 PASS  在掉链子。</p>
+<p>比如接下来这个图形程序不显示任何内容，我们按下 F11 抓取一帧，分析究竟是谁在捣蛋。</p>
+<p><img src="https://img.floraison.io/2025-10-18.png"></p>
+<p>所有 API 调用都被按照执行次序依次排列在事件栏，我们具体关注 Warning 和 Error。可以看到在第13次调用时，NSight 提示本次 Drawcall 什么都没画出来，所有片元都提前死在了深度测试上。。。于是便破案了：深度缓冲没清屏，所有的像素值都是1，代表近裁切面，于是后续所有渲染尝试都挂在这里了。（大腿拍烂ing）</p>
+<h2 id="案例2：性能分析"><a href="#案例2：性能分析" class="headerlink" title="案例2：性能分析"></a>案例2：性能分析</h2><p>所有图形程序员都曾脱口而出地感慨：“卡爆了。。。”</p>
+<p>但更具体的问题是，帧生成时间的预算究竟花去哪里了？哪几趟 PASS 最耗时间？分析管线性能对后续选择优化方向十分重要，此处我以 Vulkan 图形程序做示范。</p>
+<p><img src="https://img.floraison.io/2025-10-18_2.png"></p>
+<p>可以看到帧时间来到了24ms，其中的一趟 PASS 竟然占据了79%的时间预算。此 Pass 直接指向65号 API 调用，实为一次 Drawcall。</p>
+<p>我们首先看到此次 vkCmdDraw 调用的参数中，顶点数量仅有66个。大致是一个窗口矩形的顶点数量，很有可能是延迟渲染中的屏幕绘制阶段。通过查看 Fragment Shader 中的资源绑定可以发现大量的模型纹理，立即推断出此为延迟渲染的光照 Pass。</p>
+<p>此时 Tag 提醒本次调用包含了 RayQuery，且相关管线为经典的 Vertex-Fragment 结构，并未包含任何光线追踪着色器。于是得出结论，性能损失大概率由 FragmentShader 中的光线查询函数引发，之后的排查应集中在着色器段。</p>
 
         </div>
 
@@ -238,7 +236,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://floraison.io/2025/10/05/">https://floraison.io/2025/10/05/</a></span>
+                        <span><a href="https://floraison.io/2025/10/18/">https://floraison.io/2025/10/18/</a></span>
                     </p>
                 
                 
@@ -266,10 +264,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/10/18/">图形程序的截帧调试指南</a>
             
-            
-            <a class="next" rel="next" href="/2025/09/25/">笨蛋 TV 之 IPv4 暴露公网</a>
+            <a class="next" rel="next" href="/2025/10/05/">Mirror's Edge 所不为人知的碎片 Part.1</a>
             
         </section>
 
