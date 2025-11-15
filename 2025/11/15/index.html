@@ -13,7 +13,7 @@
 
 
 
-<title>图形程序的截帧调试指南 | Floraison</title>
+<title>DXBC 汇编字段到 HLSL 的反编译指南 | Floraison</title>
 
 
 
@@ -188,7 +188,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">图形程序的截帧调试指南</h1>
+            <h1 class="post-title">DXBC 汇编字段到 HLSL 的反编译指南</h1>
             
                 <div class="post-meta">
                     
@@ -197,7 +197,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 18, 2025&nbsp;&nbsp;14:38:02</a>
+                        Date: <a href="#">November 15, 2025&nbsp;&nbsp;16:25:11</a>
                         </span>
                     
                     
@@ -206,22 +206,28 @@
         </header>
 
         <div class="post-content">
-            <p>想象你花了半天时间编写了图形程序，一切都是那样的完美，直到…你按下 F5 打算调试一下，于是噩梦就降临了。黑漆漆一块大屏乎在脸上，啥都木有。</p>
-<p>你开始怀疑某个 shader 出了错，可人家正经过了编译。或者是某处 API 没用对？验证层又告诉你没问题。那总不能是 Feature 支持没跟上吧？于是你又写了一堆 <code>vkGetPhysicalDeviceFeatures()</code>，最后发现自己还是小瞧这张破卡了。</p>
-<p>以上都是图形开发的日常惹…先不要着急拍烂大腿。就好像 C&#x2F;C++ 可以随时在调试时打个断点，看看堆栈里究竟填了什么，图形开发自然也会有类似的调试操作。</p>
-<h2 id="使用-Nvidia-NSight-截帧"><a href="#使用-Nvidia-NSight-截帧" class="headerlink" title="使用 Nvidia NSight 截帧"></a>使用 Nvidia NSight 截帧</h2><p>截帧指的是捕获 GPU 渲染的整个指令序列和资源状态，用于离线分析。截帧工具会在程序运行时抓取某一帧的所有 GPU 状态和调用，然后你可以逐步查看每个渲染通道、每个 Shader 的结果。这里使用 NSight 以作示范，相较于 Intel GPA，RDC 等，NSight 是我所使用过最为直观的截帧工具：绑定图形程序所在的进程之后，按下 F11 便可以直接开始分析。</p>
-<p><img src="https://img.floraison.io/2025-10-18_3.png"></p>
-<p>虽然 NSight 有直接依附进 IDE，比如 VisualStudio 的能力，不过还是建议直接绑定目标图形程序（项目 Debug 目录下的 .exe 文件），在欢迎页选择 Start Activity，选择图形程序的位置后就可以启动调试器。</p>
-<h2 id="案例1：错误调试"><a href="#案例1：错误调试" class="headerlink" title="案例1：错误调试"></a>案例1：错误调试</h2><p>正如在引文部分的，大多数不能被编译器和验证层捕获到的错误，几乎都是对图形 API 调用的逻辑上的一时疏忽造成的。比如资源没有传递到对应 shader，又或者是忘记清空上一帧的深度缓冲，这类逻辑错误实在是难以排查，需要截帧分析具体是哪趟 PASS  在掉链子。</p>
-<p>比如接下来这个图形程序不显示任何内容，我们按下 F11 抓取一帧，分析究竟是谁在捣蛋。</p>
-<p><img src="https://img.floraison.io/2025-10-18.png"></p>
-<p>所有 API 调用都被按照执行次序依次排列在事件栏，我们具体关注 Warning 和 Error。可以看到在第13次调用时，NSight 提示本次 Drawcall 什么都没画出来，所有片元都提前死在了深度测试上。。。于是便破案了：深度缓冲没清屏，所有的像素值都是1，代表近裁切面，于是后续所有渲染尝试都挂在这里了。（大腿拍烂ing）</p>
-<h2 id="案例2：性能分析"><a href="#案例2：性能分析" class="headerlink" title="案例2：性能分析"></a>案例2：性能分析</h2><p>所有图形程序员都曾脱口而出地感慨：“卡爆了。。。”</p>
-<p>但更具体的问题是，帧生成时间的预算究竟花去哪里了？哪几趟 PASS 最耗时间？分析管线性能对后续选择优化方向十分重要，此处我以 Vulkan 图形程序做示范。</p>
-<p><img src="https://img.floraison.io/2025-10-18_2.png"></p>
-<p>可以看到帧时间来到了24ms，其中的一趟 PASS 竟然占据了79%的时间预算。此 Pass 直接指向65号 API 调用，实为一次 Drawcall。</p>
-<p>我们首先看到此次 vkCmdDraw 调用的参数中，顶点数量仅有66个。大致是一个窗口矩形的顶点数量，很有可能是延迟渲染中的屏幕绘制阶段。通过查看 Fragment Shader 中的资源绑定可以发现大量的模型纹理，立即推断出此为延迟渲染的光照 Pass。</p>
-<p>此时 Tag 提醒本次调用包含了 RayQuery，且相关管线为经典的 Vertex-Fragment 结构，并未包含任何光线追踪着色器。于是得出结论，性能损失大概率由片元着色器中的光线查询函数引发，之后的排查应集中在着色器端进行。</p>
+            <p>对于一般管线，无论 Nsight&#x2F;GPA 逆向得到的 shader 均只有 dxbc 反汇编字段，由于 Nsight 不提供热修改着色器的能力，这部分使用 GPA 进行（GPA 仅以 dxbc 反汇编的形式支援热修改）同时因其并未内置反汇编码到高级着色语言的转译模块，这里引入开源 dxbc2hlsl工具 cmd_Decompiler.exe</p>
+<p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/Quon/HLSLDecompiler">GitHub - Quon&#x2F;HLSLDecompiler: HLSL Decompiler forked from 3Dmigoto</a></p>
+<h2 id="Error：0x80004005"><a href="#Error：0x80004005" class="headerlink" title="Error：0x80004005"></a>Error：0x80004005</h2><p>如果在反编译过程中报出代码 0x80004005 的错误，代表着精准踩进了坑。这行通用 Error 代码毫无任何信息含量，大概率之前在 RenderDoc 中集成的插件版也从来没遇到过。</p>
+<p><img src="https://img.floraison.io/2025-11-12.png"></p>
+<p>事实上，cmd_Decompiler.exe 的 -D 选项接受的输入是 dxbc 二进制字节码，而非 dxbc 反汇编后得到的汇编字段，此报错由输入了 asm 汇编字段产生。</p>
+<p>实际的反汇编顺序应为：DXBC -&gt; ASM -&gt; HLSL，而 cmd_Decompiler.exe 仅支持从 DXBC 二进制字节码向 HLSL 的直接转译。</p>
+<p><img src="https://img.floraison.io/2025-11-12_1.png"></p>
+<p>虽然 Nsight&#x2F;GPA 将上述字段称为 DXBC，但事实上它们只是 dxbc 的反汇编产物，所以在翻译回 hlsl 之前，需要先将 ASM 汇编码组装回 DXBC（GPA 不提供组装），无语…</p>
+<p>以下是一次正确的反汇编流程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmd_Decompiler.exe -a h1.asm</span><br><span class="line"></span><br><span class="line">cmd_Decompiler.exe -D h1.shdr</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="https://img.floraison.io/2025-11-12_2.png"></p>
+<h2 id="Decompiling-Error"><a href="#Decompiling-Error" class="headerlink" title="Decompiling Error"></a>Decompiling Error</h2><p>如果第二步从 dxbc 二进制字节码的过程中报出语法解析错误，代表此版 cmd_Decompiler.exe 尚未支持 SM5.0+ 的语法特性，然而此项目的着色器大量使用 SM5.0+ 的语法特性。</p>
+<p><img src="https://img.floraison.io/2025-11-12_3.png"></p>
+<p>cmd_Decompiler.exe 的 master 分支已经多年不再维护，好在有人为 SM5.0+ 的语法特性维护了额外分支：<br>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/Quon/HLSLDecompiler">GitHub - Quon&#x2F;HLSLDecompiler: HLSL Decompiler forked from 3Dmigoto</a><br>此分支附带预编译版本的 Release 二进制可执行文件，使用此版 cmd_Decompiler.exe 替换掉原先主分支可执行文件，再次尝试反编译 h1.shdr</p>
+<p><img src="https://img.floraison.io/2025-11-12_4.png"></p>
+<p>至此完成了从 GPA 中提取 DXBC 反汇编字段到 hlsl 的转译工作。</p>
+<h2 id="从-ASM-反汇编直接到-HLSL-的转译工具"><a href="#从-ASM-反汇编直接到-HLSL-的转译工具" class="headerlink" title="从 ASM 反汇编直接到 HLSL 的转译工具"></a>从 ASM 反汇编直接到 HLSL 的转译工具</h2><p>dxbc_reader 是一个支援直接从 ASM 反汇编字段转移 hlsl 的 lua 脚本工具。实测没有联系上下文的能力，单纯的行对行直接翻译，可读性较差。（甚至不能识别分支与循环）不过仍可以用于与 cmd_Decompiler.exe 的转译内容进行联合校对。项目中自带 lua 解释器，可直接执行。</p>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/luxuia/dxbc_reader">GitHub - luxuia&#x2F;dxbc_reader: easy to read hlsl asm shader code. parse dxbc text and export hlsl like for read</a> </p>
+<p>命令行语法：.\lua\lua.exe dxbc_reader.lua example&#x2F;fragment.txt -o dxbc.out</p>
 
         </div>
 
@@ -236,7 +242,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://floraison.io/2025/10/18/">https://floraison.io/2025/10/18/</a></span>
+                        <span><a href="https://floraison.io/2025/11/15/">https://floraison.io/2025/11/15/</a></span>
                     </p>
                 
                 
@@ -264,10 +270,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/11/15/">DXBC 汇编字段到 HLSL 的反编译指南</a>
             
-            
-            <a class="next" rel="next" href="/2025/10/05/">Mirror's Edge 所不为人知的碎片 Part.1</a>
+            <a class="next" rel="next" href="/2025/10/18/">图形程序的截帧调试指南</a>
             
         </section>
 
