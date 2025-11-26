@@ -13,7 +13,7 @@
 
 
 
-<title>DXBC 汇编字段到 HLSL 的反编译指南 | Floraison</title>
+<title>寒霜引擎的分区法线编解码 | Floraison</title>
 
 
 
@@ -188,7 +188,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">DXBC 汇编字段到 HLSL 的反编译指南</h1>
+            <h1 class="post-title">寒霜引擎的分区法线编解码</h1>
             
                 <div class="post-meta">
                     
@@ -197,7 +197,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">November 15, 2025&nbsp;&nbsp;16:25:11</a>
+                        Date: <a href="#">November 26, 2025&nbsp;&nbsp;17:58:37</a>
                         </span>
                     
                     
@@ -206,28 +206,11 @@
         </header>
 
         <div class="post-content">
-            <p>对于一般管线，无论 Nsight&#x2F;GPA 逆向得到的 shader 均只有 dxbc 反汇编字段，由于 Nsight 不提供热修改着色器的能力，这部分使用 GPA 进行（GPA 仅以 dxbc 反汇编的形式支援热修改）同时因其并未内置反汇编码到高级着色语言的转译模块，这里引入开源 dxbc2hlsl工具 cmd_Decompiler.exe</p>
-<p>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/Quon/HLSLDecompiler">GitHub - Quon&#x2F;HLSLDecompiler: HLSL Decompiler forked from 3Dmigoto</a></p>
-<h2 id="Error：0x80004005"><a href="#Error：0x80004005" class="headerlink" title="Error：0x80004005"></a>Error：0x80004005</h2><p>如果在反编译过程中报出代码 0x80004005 的错误，代表着精准踩进了坑。这行通用 Error 代码毫无任何信息含量，大概率之前在 RenderDoc 中集成的插件版也从来没遇到过。</p>
-<p><img src="https://img.floraison.io/2025-11-12.png"></p>
-<p>事实上，cmd_Decompiler.exe 的 -D 选项接受的输入是 dxbc 二进制字节码，而非 dxbc 反汇编后得到的汇编字段，此报错由输入了 asm 汇编字段产生。</p>
-<p>实际的反汇编顺序应为：DXBC -&gt; ASM -&gt; HLSL，而 cmd_Decompiler.exe 仅支持从 DXBC 二进制字节码向 HLSL 的直接转译。</p>
-<p><img src="https://img.floraison.io/2025-11-12_1.png"></p>
-<p>虽然 Nsight&#x2F;GPA 将上述字段称为 DXBC，但事实上它们只是 dxbc 的反汇编产物，所以在翻译回 hlsl 之前，需要先将 ASM 汇编码组装回 DXBC（GPA 不提供组装），无语…</p>
-<p>以下是一次正确的反汇编流程：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmd_Decompiler.exe -a h1.asm</span><br><span class="line"></span><br><span class="line">cmd_Decompiler.exe -D h1.shdr</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="https://img.floraison.io/2025-11-12_2.png"></p>
-<h2 id="Decompiling-Error"><a href="#Decompiling-Error" class="headerlink" title="Decompiling Error"></a>Decompiling Error</h2><p>如果第二步从 dxbc 二进制字节码的过程中报出语法解析错误，代表此版 cmd_Decompiler.exe 尚未支持 SM5.0+ 的语法特性，然而此项目的着色器大量使用 SM5.0+ 的语法特性。</p>
-<p><img src="https://img.floraison.io/2025-11-12_3.png"></p>
-<p>cmd_Decompiler.exe 的 master 分支已经多年不再维护，好在有人为 SM5.0+ 的语法特性维护了额外分支：<br>仓库地址：<a target="_blank" rel="noopener" href="https://github.com/Quon/HLSLDecompiler">GitHub - Quon&#x2F;HLSLDecompiler: HLSL Decompiler forked from 3Dmigoto</a><br>此分支附带预编译版本的 Release 二进制可执行文件，使用此版 cmd_Decompiler.exe 替换掉原先主分支可执行文件，再次尝试反编译 h1.shdr</p>
-<p><img src="https://img.floraison.io/2025-11-12_4.png"></p>
-<p>至此完成了从 GPA 中提取 DXBC 反汇编字段到 hlsl 的转译工作。</p>
-<h2 id="从-ASM-反汇编直接到-HLSL-的转译工具"><a href="#从-ASM-反汇编直接到-HLSL-的转译工具" class="headerlink" title="从 ASM 反汇编直接到 HLSL 的转译工具"></a>从 ASM 反汇编直接到 HLSL 的转译工具</h2><p>dxbc_reader 是一个支援直接从 ASM 反汇编字段转移 hlsl 的 lua 脚本工具。实测没有联系上下文的能力，单纯的行对行直接翻译，可读性较差。（甚至不能识别分支与循环）不过仍可以用于与 cmd_Decompiler.exe 的转译内容进行联合校对。项目中自带 lua 解释器，可直接执行。</p>
-<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/luxuia/dxbc_reader">GitHub - luxuia&#x2F;dxbc_reader: easy to read hlsl asm shader code. parse dxbc text and export hlsl like for read</a> </p>
-<p>命令行语法：.\lua\lua.exe dxbc_reader.lua example&#x2F;fragment.txt -o dxbc.out</p>
+            <p>这篇文章讨论法线信息的压缩思路。归一化后直接抛弃Z分量是在切线空间的做法，照搬到世界空间下会永久丢失Z分量的正负性。与此同时，此种做法在Z值接近0时会造成极大的压缩误差，无法支撑后续 BRDF 输入所需的法线精度。<br>在寒霜引擎的延迟渲染环节，为了在中间阶段节省出一个 gbuffer 通道用以存储 PBR 相关材质属性，寒霜引擎将右乘 TBN 得到的世界空间法线坐标经历一次复杂重新编码，压缩到 RT0（R10G10B10A8格式） 中的 xy 通道，同时将基底的索引压缩到 RT1（albedo gbuffer，R8G8B8A8格式）。后续将在 lighting pass 中还原原始法线，完成光照计算。</p>
+<h2 id="前置资源"><a href="#前置资源" class="headerlink" title="前置资源"></a>前置资源</h2><p>延迟绘制中的几何 pass 阶段，每个 shader 均包含这个怪异的 cubemap 纹理资源，视觉上呈现为 1*1*6 的 R8_UNORM 单通道立方体纹理，储存着 0-5 范围内的整数索引。这个 cubemap 巧妙地将“根据法线方向选择对应的正交基”这样的分支逻辑转换为“采样得到索引”的逻辑，避免了着色器中分支的产生。<br>提醒注意：对于 UNORM 格式的纹理采样将被映射在 0-1 的范围内，需要手动乘以255后向下取整。<br><img src="https://img.floraison.io/2025-11-26_3.png"><br>与此同时，cbuffer1 中保存着6组 normalBasisTransform 变换矩阵（编号0-5），其实质是建立在立方体六面上的正交基。在此缓冲以索引26为头部开始。分别建立起用于将世界空间坐标将被转换到局部空间。<br><img src="https://img.floraison.io/2025-11-26.png"></p>
+<h2 id="编码（方向分区）"><a href="#编码（方向分区）" class="headerlink" title="编码（方向分区）"></a>编码（方向分区）</h2><p>为实现 PBR 可接受的法线精度还原，寒霜引擎使用6个方向分区压缩法线，对应六组 4*3 normalBasisTransform 基底。<br>在编码阶段，此时已经完整计算出归一化的世界空间坐标系下的模型法线。着色器的行为可归为根据法线方向选择一组最合适基底的索引编号，而后计算偏移量，在 cbuffer 中寻址找出这一组 4*3 的完整基底。（简单概括就是找出法线穿过立方体的哪一面，取这一面的正交基来编码）<br>世界空间法线坐标将被转换到以六组基底其一的局部空间，同时 z 分量将被抛弃，最后 xy 分量经 *0.5+0.5 映射到 0-1 空间之后，写入 RT0 的前两个通道。同时将 basis 的索引编号写入 RT1 的w通道。（下图仅显示前两通道的可视化）<br><img src="https://img.floraison.io/2025-11-26_1.png"></p>
+<h2 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h2><p>法线的解码还原在延迟管线的 lighting pass 进行，这里对 lighting pass 进行相关逆向分析。<br>光照阶段内部，唯一的 cbuffer 同样存在着6组基底矩阵用于还原世界空间中的法线。<br><img src="https://img.floraison.io/2025-11-26.png"><br>着色器将首先从先前阶段的 RT 中采样 xy 通道，取得已压缩的法线信息。而后由 t1（对应几何 pass 中的 RT1）中采样取得 basis 编号。<br>对于获得到的，已压缩至2通道的法线向量，先通过 sqrt(1 - x^2 - y^2) 的方式还原基底空间下的 z 方向的分量，然后使用由 cb0 索引取得的对应正交基底的变换矩阵。将矩阵右乘于基底空间下的法线向量即可重建出足以应用于 PBR 材质高精度的法线信息。<br><img src="https://img.floraison.io/2025-11-26_2.png"></p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>按照寒霜的做法，节省出一个原本用于法线分量的十位通道，但与此同时却又占用了八位通道用以存放基底索引值。<br>所以到头来这一切真的值得么。。。听窝的，咱还是放过法线吧~</p>
 
         </div>
 
@@ -242,7 +225,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://floraison.io/2025/11/15/">https://floraison.io/2025/11/15/</a></span>
+                        <span><a href="https://floraison.io/2025/11/26/">https://floraison.io/2025/11/26/</a></span>
                     </p>
                 
                 
@@ -270,10 +253,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2025/11/26/">寒霜引擎的分区法线编解码</a>
             
-            
-            <a class="next" rel="next" href="/2025/10/18/">图形程序的截帧调试指南</a>
+            <a class="next" rel="next" href="/2025/11/15/">DXBC 汇编字段到 HLSL 的反编译指南</a>
             
         </section>
 
