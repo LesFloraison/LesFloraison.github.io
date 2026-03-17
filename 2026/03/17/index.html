@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>HD2 的积雪地形渲染 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">HD2 的积雪地形渲染</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 17, 2026&nbsp;&nbsp;18:57:36</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p><img src="https://img.floraison.io/2026-3-17_1.png"></p>
+<p>HD2 渲染地形使用了2次绘制。</p>
+<h1 id="远景地形网格"><a href="#远景地形网格" class="headerlink" title="远景地形网格"></a>远景地形网格</h1><p>PASS1 用于绘制远离摄像机的地形，不会开启置换纹理与积雪下陷，绘制远处大面积的简单地形。</p>
+<p><img src="https://img.floraison.io/2026-3-17_2.png"></p>
+<p>(最终的远景网格)</p>
+<h2 id="基于距离的连续-LOD"><a href="#基于距离的连续-LOD" class="headerlink" title="基于距离的连续 LOD"></a>基于距离的连续 LOD</h2><p>每块地形网格 instance 的大小为 32*32，通过计算顶点到相机位置的距离，为每块网格选择合适的缩放尺寸。远处的地形网格会更加稀疏。低级 LoD 会在与高级 LoD 衔接的边缘削减边数以确保在世界空间中拼凑出无缝的地形网格。</p>
+<h2 id="抬升地形高度"><a href="#抬升地形高度" class="headerlink" title="抬升地形高度"></a>抬升地形高度</h2><p>通过顶点相对于相机的距离，计算应映射到的高度纹理 Mipmap 级别（限制在 0 到 4 之间），对高度图 __tex_hmap 进行采样，获取地形高度，并乘以 terrain_size.z 进行缩放，完成高度起伏。</p>
+<p>远景地形不会开启置换，此处是为地形附加宏观高度上的起伏</p>
+<p><img src="https://img.floraison.io/2026-3-17_3.png"></p>
+<p>（采样高度纹理，为地形添加起伏）</p>
+<h1 id="近处网格与积雪下陷"><a href="#近处网格与积雪下陷" class="headerlink" title="近处网格与积雪下陷"></a>近处网格与积雪下陷</h1><p>PASS2 地形绘制以摄像机为中心，绘制极近距离的地形，这里开启置换与积雪下陷的细节地形，为确保有足够的三角面数塌陷地形，此处使用细分着色器大幅增加三角面数。</p>
+<p><img src="https://img.floraison.io/2026-3-17_4.png"></p>
+<p>与远景地形不同，摄像机附近的地形不划分 LoD，通过细分直接产生的海量三角面将会应用置换纹理，添加地形细节</p>
+<p>积雪凹陷的交互是通过一张动态生成的高度遮罩纹理 tex_trample，引擎根据玩家移动轨迹，实时更新这张图。代码中的 camera_center_pos 和纹理缩放系数 0.0078125（1&#x2F;128）表明，这张纹理并不覆盖整个世界，而是以相机（或玩家）为中心，大小为 128x128 单位的局部跟随贴图。</p>
+<p><img src="https://img.floraison.io/2026-3-17_5.png"></p>
+<p>（tex_trample）</p>
+<p>HD2 将多层地表材质的 ID 打包在了一个单通道的32位纹理中（ __tex_material_map），采样此纹理并对读取到的值进行了密集的位运算（移位掩码：&gt;&gt; 26, &gt;&gt; 21, &gt;&gt; 16, &gt;&gt; 8）。</p>
+<p>然后根据解码出的材质索引，去 trample_min_max 缓冲区中读取该地形材质允许的最大下陷深度和最小下陷深度，这是存放着各种地形凹陷程度的一张表。此表中的绝大多数材质都被置零，不可以凹陷，而积雪的下陷度可以很大。</p>
+<p><img src="https://img.floraison.io/2026-3-17_6.png"></p>
+<p>（trample_min_max）</p>
+<h2 id="脚印贴花"><a href="#脚印贴花" class="headerlink" title="脚印贴花"></a>脚印贴花</h2><p><img src="https://img.floraison.io/2026-3-17_7.png"></p>
+<p>浅薄的雪地不会产生几何层面上的凹陷，但会留下脚印贴花（法线）。</p>
+<p>顶点着色器使用一个逻辑上的立方体，通过确定某个像素点在投影立方体内的相对位置，就可以重建出对应的屏幕坐标。</p>
+<p>先读取地形原有的法线，将其从 [0, 1] 映射回 [-1, 1] 范围，再计算投影方向与地形法线的点积。</p>
+<p>通过传入的的两个参数 angle_fade_start 与 angle_fade （余弦 + 1），根据地形法线与上方向点乘结果做 smoothstep，如果地形法线与脚印的法线角度差异过大，则降低 Alpha 值（ &gt; 56°）或直接剔除（ &gt; 71° ），防止脚印在斜坡上发生严重的拉伸变形。</p>
+<p><img src="https://img.floraison.io/2026-3-17_8.png"></p>
+<h2 id="雪地的细节法线"><a href="#雪地的细节法线" class="headerlink" title="雪地的细节法线"></a>雪地的细节法线</h2><p><img src="https://img.floraison.io/2026-3-17_9.png"></p>
+<p>地形的延迟渲染阶段结束之后，在已有的地形法线 gbuffer 之上又覆盖了一层法线细节信息。</p>
+<p>场景中存在多种不同状态的雪打包在同一个纹理数组中，通过外部传入的 snow_index 来动态切换当前地形区域应该显示哪种雪质。着色器提取了世界坐标的水平面分量（HD2 使用的 Stingray 引擎世界坐标右手 Zup 坐标系，和 UE 相反），并乘以一个硬编码的基础缩放值 0.1875</p>
+<p>最后为地形应用了由材质参数控制的缩放变量 snow_tile，并将 snow_index 作为纹理组索引放入向量，形成最终用于采样的坐标</p>
+<p><img src="https://img.floraison.io/2026-3-17_10.png"></p>
+<p>（ __tex_snow_pnrb_array ）</p>
+<h2 id="积雪的冰晶闪烁"><a href="#积雪的冰晶闪烁" class="headerlink" title="积雪的冰晶闪烁"></a>积雪的冰晶闪烁</h2><p><img src="https://img.floraison.io/2026-3-17_11.png"></p>
+<p>HD2 为积雪材质的地形增加了额外的细节，注意此处太阳光照下的积雪表面，具有随镜头移动而闪烁的冰晶。</p>
+<p>为了模拟细碎的冰渣颗粒感。这一步通过采样一张三通道的噪声纹理完成。</p>
+<p><img src="https://img.floraison.io/2026-3-17_12.png"></p>
+<p>（__tex_glint_sample）</p>
+<p>首先，根据外部参数 snow_glint_size 缩放 UV 坐标，采样噪声纹理。</p>
+<p>Z通道的值被还原为 [-1, 1] 的范围，并乘以强度参数 snow_glint_roughness。这一噪声将被叠加到雪地的全局粗糙度 snow_roughness 上。</p>
+<p>除此之外，着色器利用 X 和 Y 通道构建了一个虚拟的冰晶微法线。并通过乘以 0.15 压平法线方向，使这部分冰晶发生严重倾斜。</p>
+<p>有了微法线后，计算半程向量与微法线的点乘，并使用极端的指数 pow(96)，筛出万分之一的闪光点。</p>
+<p>冰晶闪烁的强度主要来源于噪声纹理的 Z 通道，再叠加微法线的细小贡献，最后叠加进粗糙度 RT，留给后续延迟渲染的着色阶段处理，在那里产生最后的闪烁效果。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2026/03/17/">https://floraison.io/2026/03/17/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/02/16/">我的囚笼</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
