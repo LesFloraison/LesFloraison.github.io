@@ -13,7 +13,7 @@
 
 
 
-<title>Hello World | Floraison</title>
+<title>HD2 的泛光实现 | Floraison</title>
 
 
 
@@ -188,7 +188,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Hello World</h1>
+            <h1 class="post-title">HD2 的泛光实现</h1>
             
                 <div class="post-meta">
                     
@@ -197,7 +197,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">October 24, 2024&nbsp;&nbsp;17:53:30</a>
+                        Date: <a href="#">March 18, 2026&nbsp;&nbsp;11:19:05</a>
                         </span>
                     
                     
@@ -206,19 +206,41 @@
         </header>
 
         <div class="post-content">
-            <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+            <h1 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h1><p>HD2 中的泛光效果不会对发光体的类型做特别区分，不使用卷积核构造泛光形状。直接通过对下采样 RT 的长宽限制，控制泛光形状，所有泛光在同一阶段完成，分为均匀泛光与水平方向的泛光。</p>
+<p>水平泛光的贡献强于均匀泛光。</p>
+<p>水平方向泛光强度取决于：</p>
+<p>1.发光区域水平方向宽度</p>
+<p>2.发光区域亮度</p>
+<p><img src="https://img.floraison.io/2026-3-18_1.PNG"></p>
+<h1 id="泛光区域提取"><a href="#泛光区域提取" class="headerlink" title="泛光区域提取"></a>泛光区域提取</h1><p>首先采样当前画面的颜色。然后判断是否开启了自动曝光。如果开启，则从一个1x1大小的纹理 __tex_current_exposure 中读取当前的曝光值并相乘；否则使用固定的曝光值。</p>
+<p>将亮度减去 Bloom 的阈值。如果亮度低于阈值，则直接变为0全黑，被剔除；如果高于阈值，则保留超出的部分。然后再把新的亮度乘回刚才的颜色上。</p>
+<p>最后对保留下来的的高光做了一次除以（亮度+偏移量）的操作，再开始进行下采样。</p>
+<p>$$\frac{Color}{Luma+Offset}$$</p>
+<p><img src="https://img.floraison.io/2026-3-18_2.PNG"></p>
+<p>（泛光区域的提取）</p>
+<h1 id="下采样与合成"><a href="#下采样与合成" class="headerlink" title="下采样与合成"></a>下采样与合成</h1><p>对于提取出的泛光区域纹理，将对其进行8次下采样处理，产生8张不同尺寸的 RT：</p>
+<p>5张用于产生方向均匀的泛光（RT的长宽比长宽比保持原始 16:9），余下3张用于横向泛光（RT 固定高度，横向极端压缩），在原始分辨率为1080P时，以下是8级下采样 RT 的纹理尺寸的情况。</p>
+<p><img src="https://img.floraison.io/2026-3-18_3.PNG"></p>
+<p>均匀泛光 RT 尺寸：</p>
+<p>input_texture0_size 960.00, 540.00</p>
+<p>input_texture1_size 480.00, 270.00</p>
+<p>input_texture2_size 120.00, 67.00</p>
+<p>input_texture3_size 30.00, 16.00</p>
+<p>input_texture4_size 7.00, 4.00</p>
+<p>水平泛光 RT 尺寸：</p>
+<p>input_texture5_size 120.00, 270.00</p>
+<p>input_texture6_size 30.00, 270.00</p>
+<p>input_texture7_size 7.00, 270.00</p>
+<p><img src="https://img.floraison.io/2026-3-18_4.png"></p>
+<p>（8张纹理拉伸回原分辨率后的效果）</p>
+<p>横向泛光强度取决于发光区域的宽度：在下采样纹理在水平方向的极端压缩（最后一级mipmap的水平方向甚至只有七个像素）之后，激光子弹由于水平发光区域狭窄，在水平方向的贡献几近于0。</p>
+<p>而具有水平宽度的发光区域将会获得极大优势，从而产生条带状泛光。</p>
+<p>最后将 Bloom 结果与镜头纹理叠加，作为最终结果。</p>
+<p><img src="https://img.floraison.io/2026-3-18_5.png"></p>
+<p>（__tex_global_lens_dirt_map）</p>
+<h1 id="眼部泛光"><a href="#眼部泛光" class="headerlink" title="眼部泛光"></a>眼部泛光</h1><p>虽然敌人眼部发光区域宽度较小，但其亮度被赋予120+的高亮值，相比之下，上面展示的探照灯仅为20+左右。亮度值存在6倍差距，致使敌人的眼部发光区域泛光依旧明显。</p>
+<p><img src="https://img.floraison.io/2026-3-18_6.png"></p>
+<p>（明显的眼部泛光）</p>
 
         </div>
 
@@ -233,7 +255,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://floraison.io/2024/10/24/">https://floraison.io/2024/10/24/</a></span>
+                        <span><a href="https://floraison.io/2026/03/18/">https://floraison.io/2026/03/18/</a></span>
                     </p>
                 
                 
@@ -261,8 +283,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2024/10/31/">Markdown 测试</a>
             
+            <a class="next" rel="next" href="/2026/03/17/">HD2 的积雪地形渲染</a>
             
         </section>
 
