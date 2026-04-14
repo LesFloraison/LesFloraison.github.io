@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>终末地的角色描边 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">终末地的角色描边</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 14, 2026&nbsp;&nbsp;19:02:01</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Clip-Space-扩展边缘"><a href="#Clip-Space-扩展边缘" class="headerlink" title="Clip Space 扩展边缘"></a>Clip Space 扩展边缘</h1><p>顶点着色器阶段，在前期已经绘制了角色的基础上，又把人物模型画了一遍。同时这一 drawcall 绘制的人物模型 Scale 稍大于先前的模型，并且进行正面剔除。<br>为了得到粗细均匀的描边，VS 在这里没有直接把顶点沿世界法线推离而放大模型，而是先算出顶点原本的裁剪坐标，裁剪空间里偏移 SV_Position 的xy，也就是说：<br>先得到原始裁剪坐标，把描边方向投到屏幕平面。把世界空间描边方向，映射成屏幕上的二维方向，再做归一化。最后乘宽度参数，得到最终偏移。</p>
+<p><img src="https://img.floraison.io/2026-4-14_1.PNG"><br>(粗细均匀的外描边)</p>
+<h1 id="采样描边的基础色"><a href="#采样描边的基础色" class="headerlink" title="采样描边的基础色"></a>采样描边的基础色</h1><ol>
+<li>先采样基础贴图</li>
+<li>乘一层调色（cb5[5].rgb）</li>
+<li>围绕亮度调整饱和度</li>
+</ol>
+<h1 id="生成两套基础色版本"><a href="#生成两套基础色版本" class="headerlink" title="生成两套基础色版本"></a>生成两套基础色版本</h1><p>为了后续的描边在迎光与背光之间做插值，这里提前准备了两套明暗版本的基础色：<br>原始版：在前面 BaseColor 的基础上乘0.96。<br>调色版：使用一张 3D LUT 纹理对基础颜色进行调色后乘0.96。<br><img src="https://img.floraison.io/2026-4-14_2.PNG"><br>（ColorGrading LUT）</p>
+<h1 id="采样环境光底色"><a href="#采样环境光底色" class="headerlink" title="采样环境光底色"></a>采样环境光底色</h1><p>这部分从3组，6个体积纹理中插值得到一个环境光底色。<br>同时保留了 Fallback 分支，如果那套体积环境光没启用，则将绕过复杂的体积纹理采样步骤，直接从常量缓冲 cb0[188].xyz 拿到固定的环境光信息。环境光是描边的最主要光照贡献<br><img src="https://img.floraison.io/2026-4-14_3.PNG"><br>（环境光对描边的贡献）</p>
+<h1 id="通过主光方向采样-ramp"><a href="#通过主光方向采样-ramp" class="headerlink" title="通过主光方向采样 ramp"></a>通过主光方向采样 ramp</h1><p>通过法线和主光方向得到一个 NdotL，再映射到 0-1 范围采样 ramp 纹理，用法是把结果乘到先前那项调色后的基础色上。ramp 纹理是一个长条三通道颜色，因此U方向采样的映射公式是 NdotL * 0.5 + 0.5 映射到 01 空间<br><img src="https://img.floraison.io/2026-4-14_4.PNG"><br>（Ramp 色带）<br>然后为ramp计算两件事：ramp.rgb 与 ramp 的跨度（RGB 三个值最大与最小之间的跨度），这里的跨度对最终的 ramp 色存在影响<br>如果跨度很小，ramp 的最终颜色接近 1，对颜色影响弱<br>如果跨度很大很大，ramp 的最终颜色更接近 ramp.rgb</p>
+<h1 id="根据自阴影遮蔽再做一次混合（可选）"><a href="#根据自阴影遮蔽再做一次混合（可选）" class="headerlink" title="根据自阴影遮蔽再做一次混合（可选）"></a>根据自阴影遮蔽再做一次混合（可选）</h1><p>自遮蔽 buffer 分为两个通道，R通道存放场景，G通道存放角色的遮蔽信息。这里只用到了角色信息<br>同时，为遮蔽信息提供了两个额外的开关：<br>cb4[34].x作为权重控制是否使用遮蔽信息，cb0[187].z 作为淡化系数用于提亮遮蔽。<br>自遮蔽贡献为部分角色启用，这里为此角色的淡化系数置0，说明遮蔽信息开启。<br><img src="https://img.floraison.io/2026-4-14_5.png"><br>（角色遮蔽信息）<br>以下是角色自遮蔽的计算过程：<br>遮蔽的计算结果来源于先前的遮蔽 PASS，此处的 MaskBuffer 用于给当前像素选出”该像素属于哪一个角色阴影投影器”<br><img src="https://img.floraison.io/2026-4-14_6.png"><br>（投影选择器 Mask）<br>对这里的角色而言，一直在使用第3号角色阴影投影器配置，视觉上这个投影点位于相机头顶。后续的 UV 会自动映射到深度纹理到这个指定子区域。<br>然后对将要投影的点做一次偏移，沿投影方向退一点，再把偏移后的位置投到角色阴影投影器空间<br><img src="https://img.floraison.io/2026-4-14_7.png"><br>（t2：来自不同方向的角色投影深度）<br>这里采样 icb 中预留的 16 个 2D 空间中的偏移样本，使用 gather4 拿到四个相邻的样本深度再减参考值。超出投影范围的点直接给1当作不遮蔽，最后统计通过比较的样本数量，和它们超出参考深度的总和，综合给出在此方向下该点自阴影的遮蔽强度。<br><img src="https://img.floraison.io/2026-4-14_8.png"><br>（16*4 次深度比较）</p>
+<h1 id="额外的轮廓边缘染色"><a href="#额外的轮廓边缘染色" class="headerlink" title="额外的轮廓边缘染色"></a>额外的轮廓边缘染色</h1><p>终末地为每个角色额外准备了一个固定的轮廓颜色 &#x2F; tintColor<br>首先着色器为描边计算通过 VN 点乘计算了一个边缘系数，再钳制到范围内：<br>edge &#x3D; 1 - abs(dot(V, N))<br>也就是说，越靠近轮廓，边缘系数 edge 就越大，然后再从外部读取参数 cb0[194] 生成一层附加边缘色，其中 a 通道用于控制此项边缘色的强度。<br>这里同时有两个因子共同决定此项的强度：方向因子 和 基于材质本色的因子</p>
+<ol>
+<li>此处的方向因子不完全等同于主光方向，而是由主光方向和 cb0[195].yx 插值得到。</li>
+<li>基于材质本色的因子由于外部传入的插值参数 cb0[195].z 给0，因此固定为0.25。</li>
+</ol>
+<p>最终结果为 edge * tintcolor * alpha * dir * 0.25</p>
+<h1 id="最终调色（可选）"><a href="#最终调色（可选）" class="headerlink" title="最终调色（可选）"></a>最终调色（可选）</h1><p>一部分角色开启了额外的最终描边色二次调色，在输出描边颜色前做出最终调整。<br>进入到调色之前，先取前面整条光照链算出来的当前描边颜色的亮度，再做饱和度调整，其中规定了饱和度系数 cb5[3].z，从0-1的控制灰度到原色，而大于1的值则使其过饱和。<br><img src="https://img.floraison.io/2026-4-14_9.png"><br>（饱和度调整）<br>再围绕 0.5 做对比度变换，此处是以 0.5 为中点的 contrast 调整。此处 cb5[3].w 给到0.85，些许增加了输入颜色的对比度。<br><img src="https://img.floraison.io/2026-4-14_10.png"><br>（掠射角颜色叠加）<br>接下来是最后的两次颜色叠加。<br>先把颜色往一个常量 tint 色上拉，用一个常量颜色 cb5[7].xyz 去给当前描边再染一次色，通过以下三个外部参数控制。</p>
+<ul>
+<li>cb5[7].xyz：目标 tint Color </li>
+<li>cb5[7].w：tint 混合强度 </li>
+<li>cb5[3].y：保留原色链的比例</li>
+</ul>
+<p>这里保证了描边颜色的下限，最糟的情况下，即便之前所有的计算都没有颜色，也可以在最后凭空给出一个描边色<br><img src="https://img.floraison.io/2026-4-14_11.png"></p>
+<p>再根据 NdotV 计算掠射角 Mask 叠一层附加色，它的行为是：</p>
+<ul>
+<li>当 dot(V,N) &gt;&#x3D; t 时，mask &#x3D; 0 </li>
+<li>当 dot(V,N) &lt; t 时，mask 开始升高</li>
+</ul>
+<p>越接近轮廓，掠射角 mask 越接近 1，因此更靠近轮廓的位置，被额外赋予一层颜色 cb5[8].xyz，此处给到了float3(1,1,1)，用来模拟纯白的边缘光。<br>至此，完成描边着色。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2026/04/14/">https://floraison.io/2026/04/14/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/03/18/">HD2 的泛光实现</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
