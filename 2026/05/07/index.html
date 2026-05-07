@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Floraison">
+
+
+
+
+
+<title>图形逆向自动化指南 | Floraison</title>
+
+
+
+    <link rel="icon" href="/acetate_fixed_ico.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Floraison&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Floraison&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">图形逆向自动化指南</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Floraison</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 7, 2026&nbsp;&nbsp;19:21:07</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="RenderDoc-的修改版本"><a href="#RenderDoc-的修改版本" class="headerlink" title="RenderDoc 的修改版本"></a>RenderDoc 的修改版本</h1><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/LesFloraison/RenderDuck/releases/tag/v1.2">https://github.com/LesFloraison/RenderDuck/releases/tag/v1.2</a></p>
+<p>对于附带反截帧的游戏而言，一旦公版 RenderDoc 与 GPA 无法正常注入，可以尝试使用我的定制化版本。</p>
+<p>由于终末地当前大版本加大了检测范围，原先仅针对 renderdoc.dll 的链接库重新生成目前已经被识别到，特此彻底重新生成了整个 RDC 项目，并剔除掉 “Render” 符号。（RenderDuck -&gt; RiderDuck）</p>
+<p>RenderDuck 已经完全剔除&#x2F;替换掉公版 RDC 源码中的可识别符号，并重新打包生成。经过测试可以正常注入追放与终末地。</p>
+<p>提醒注意此版本适用于截帧，请在原版 RDC 打开帧文件进行自动化分析。不要在此修改版的基础上为其安装 RenderDoc MCP 插件，由于重新打包的缘故将不会被 MCP 服务正常识别到 qrenderdoc.exe 进程。</p>
+<p>推荐首选 DX11 API 作为注入环境，DX11 以外的环境没有进行测试。</p>
+<p><img src="https://img.floraison.io/2026-5-7_2.PNG"></p>
+<h1 id="RenderDoc-MCP"><a href="#RenderDoc-MCP" class="headerlink" title="RenderDoc MCP"></a>RenderDoc MCP</h1><p>项目地址: <a target="_blank" rel="noopener" href="https://github.com/JinxiangW/renderdoc-mcp">https://github.com/JinxiangW/renderdoc-mcp</a></p>
+<p>MCP 服务本身不解析 .rdc，而是把请求转发给运行在 qrenderdoc.exe 里面的 Python 扩展，让扩展调用 RenderDoc 官方 Python API 读取当前已打开 capture 的帧、事件、管线和资源，然后把精简 JSON 或导出的图片路径返回给 MCP。</p>
+<p>使用时时需要注意，RenderDoc 帧文件的完整上下文存在于 qrenderdoc 进程里，分析时需要在系统后台全程开启相应的 rdc 文件，且只能够开启这唯一的一个 rdc 文件。</p>
+<p>需要同时安装 MCP 服务端与 RenderDoc 扩展，假设源码仓库存放在以下目录：D:\CDX\renderdoc-mcp-master</p>
+<h2 id="Python-MCP-服务端安装"><a href="#Python-MCP-服务端安装" class="headerlink" title="Python MCP 服务端安装"></a>Python MCP 服务端安装</h2><p>推荐安装成全局可执行命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> D:\CDX\renderdoc<span class="literal">-mcp-masteruv</span> tool install <span class="literal">--editable</span> . <span class="literal">--force</span></span><br></pre></td></tr></table></figure>
+
+<p>然后在 MCP 客户端配置文件中添加以下配置项，重启 Codex 客户端完成生效。Codex 客户端默认将配置文件存放在 “%USERPROFILE%.codex\config.toml”</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mcp_servers.renderdoc-mcp]</span></span><br><span class="line"><span class="attr">command</span> = <span class="string">&quot;renderdoc-mcp&quot;</span></span><br><span class="line"><span class="attr">args</span> = [<span class="string">&quot;run-mcp&quot;</span>, <span class="string">&quot;--transport&quot;</span>, <span class="string">&quot;stdio&quot;</span>]</span><br><span class="line"><span class="attr">enabled</span> = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Qrenderdoc-扩展安装"><a href="#Qrenderdoc-扩展安装" class="headerlink" title="Qrenderdoc 扩展安装"></a>Qrenderdoc 扩展安装</h2><p>这是 RenderDoc 端侧必须安装的插件部分。安装命令是：<br>    cd D:\CDX\renderdoc-mcp-masteruv run python scripts\install_ext.py</p>
+<p>它会把扩展复制到：</p>
+<p><code>%APPDATA%\qrenderdoc\extensions\renderdoc_mcp_bridge</code></p>
+<p>并把 renderdoc_mcp_bridge 写进：</p>
+<p><code>%APPDATA%\qrenderdoc\UI.config</code></p>
+<p>在 RenderDoc 顶栏的 Tools -&gt; Manage Extensions 窗口下，确认扩展是否已经启用。</p>
+<p><img src="https://img.floraison.io/2026-5-7_1.PNG"></p>
+<p>之后再验证 bridge 插件是否生效。（注意此时将 RenderDoc.exe 保留在系统后台）：<br>    uv run python scripts\bridge_req.py ping –timeout 5</p>
+<p>成功时应返回：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;result&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ok&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;pong&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>无需指定目标 rdc 文件路径，注意后台需要全程开启目标 rdc 文件，建议提前指定 eid。</p>
+<p><img src="https://img.floraison.io/2026-5-7_3.png"></p>
+<h2 id="GPA-MCP"><a href="#GPA-MCP" class="headerlink" title="GPA MCP"></a>GPA MCP</h2><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/LesFloraison/gpa-mcp">https://github.com/LesFloraison/gpa-mcp</a></p>
+<p>gpa-mcp 自己不解析 .gpa_frame 文件，而是启动 Intel GPA 的 FrameAnalyzer.exe，让 GPA 加载一个仓库自带的 Python 插件，由插件通过 GPA 内部 plugin_api 读取帧数据，再导出成 JSON；MCP 工具后续主要查询这个 JSON 缓存。</p>
+<p>与 RenderDoc MCP 不同的是，获取 *.gpa_frame 文件的上下文无需后台显式开启对应的帧文件，只需要在一轮对话的开始为其指定目标帧文件的地址即可。MCP 将在后台静默拉起 Intel GPA 的 FrameAnalyzer.exe，读取这一帧且不会弹出 GUI 窗口。</p>
+<p>对于此项只安装 MCP 服务端即可。因为第一次执行 open_capture 时，它会自动把仓库自带的 GPA Python 插件复制到：<code>%USERPROFILE%\Documents\GPA\python_plugins\</code></p>
+<p>其插件包括两个：gpa_mcp_export 与 gpa_texture_export，分别用于从 gpa_frame 文件中导出所需的输入输出信息与纹理资源。</p>
+<h2 id="GPA-MCP-服务端安装"><a href="#GPA-MCP-服务端安装" class="headerlink" title="GPA-MCP 服务端安装"></a>GPA-MCP 服务端安装</h2><p>假设源码仓库存放在以下目录：D:\CDX\renderdoc-mcp-master</p>
+<p>使用以下安装命令。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> D:\CDX\gpa<span class="literal">-mcpuv</span> tool install <span class="literal">--reinstall</span> .</span><br></pre></td></tr></table></figure>
+
+<p>安装后应能运行以下作为验证：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpa<span class="literal">-mcp</span> <span class="literal">--help</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-Codex-MCP"><a href="#配置-Codex-MCP" class="headerlink" title="配置 Codex MCP"></a>配置 Codex MCP</h2><p>在 <code>%USERPROFILE%\.codex\config.toml</code> 添加以下内容后，重启 Codex 客户端完成生效。</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[mcp_servers.gpa-mcp]</span></span><br><span class="line"><span class="attr">args</span> = [<span class="string">&quot;run-mcp&quot;</span>, <span class="string">&quot;--transport&quot;</span>, <span class="string">&quot;stdio&quot;</span>]</span><br><span class="line"><span class="attr">command</span> = <span class="string">&quot;gpa-mcp&quot;</span></span><br><span class="line"><span class="attr">enabled</span> = <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h2><p>建议在显式指定 gpa_frame 文件后，为其指定某个 Event id 进行定向分析。</p>
+<p><img src="https://img.floraison.io/2026-5-7_4.png"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Floraison</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://floraison.io/2026/05/07/">https://floraison.io/2026/05/07/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2026/04/14/">终末地的角色描边</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Floraison | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
